@@ -25,7 +25,6 @@ Este repositório contém o código-fonte do back-end, de uma plataforma para co
  ┣ 📁 utils/           → Helpers, funções utilitárias
  ┣ 📁 dtos/            → Data Transfer Objects (opcional, mas útil)
  ┣ 📁 exceptions/      → Classes de erro personalizadas
- ┣ 📁 adapters/        → Integrações externas (APIs, serviços de terceiros)
  ┣ server.ts           → Inicialização do servidor Express
  ┗ app.ts              → Configuração principal do app (middlewares, rotas)
 
@@ -131,5 +130,6 @@ Rodar:
   ```bash
 npm run dev
    ```
+
 
 
