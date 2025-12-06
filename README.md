@@ -7,51 +7,43 @@ Este repositório contém o código-fonte do back-end, de uma plataforma para co
 ## Tecnologias Utilizadas
 - Node.js — Ambiente de execução JavaScript no servidor
 - Express.js — Framework minimalista para criação de APIs
--  Sequelize ORM — Mapeamento objeto-relacional para trabalhar com PostgreSQL
+- Sequelize ORM — Mapeamento objeto-relacional para trabalhar com PostgreSQL
 - PostgreSQL — Banco de dados relacional utilizado pela aplicação
 - Docker + Docker Compose — Para facilitar deploy e ambiente padronizado
+
+## Estrutura inicial do projeto
+  ```bash
+📁 src/
+ ┣ 📁 controllers/     → Controladores: recebem requisições e chamam serviços
+ ┣ 📁 services/        → Regras de negócio e lógica da aplicação
+ ┣ 📁 repositories/    → Comunicação com o banco (ORM / Queries)
+ ┣ 📁 models/          → Modelos do banco (Sequelize, Prisma ou mongoose)
+ ┣ 📁 routes/          → Rotas organizadas por módulos
+ ┣ 📁 middlewares/     → Middlewares (auth, validações, logs...)
+ ┣ 📁 validators/      → Validações (Joi, Yup, Zod)
+ ┣ 📁 config/          → Configurações (DB, variáveis ambiente, logger)
+ ┣ 📁 utils/           → Helpers, funções utilitárias
+ ┣ 📁 dtos/            → Data Transfer Objects (opcional, mas útil)
+ ┣ 📁 exceptions/      → Classes de erro personalizadas
+ ┣ 📁 adapters/        → Integrações externas (APIs, serviços de terceiros)
+ ┣ server.ts           → Inicialização do servidor Express
+ ┗ app.ts              → Configuração principal do app (middlewares, rotas)
+
+   ```
 
 ## Padrão de Commits (Conventional Commits)
 Este projeto segue o padrão Conventional Commits para manter um histórico organizado, automatizar changelogs e facilitar releases.
 
 ### Tipos de Commits Suportados
-#### feat - nova funcionalidade
-
-  ```bash
-feat: adiciona endpoint de criação de redações
-   ```
-#### fix - correção de bug
-  ```bash
-fix: corrige erro ao salvar redação no banco
-   ```
-#### docs - documentação
-  ```bash
-docs: adiciona instruções de instalação no README
-   ```
-#### style – formatação (sem mudança de lógica)
-  ```bash
-style: ajusta indentação no controller de redações
-   ```
-#### refactor – refatoração (sem nova feature ou bug fix)
-  ```bash
-refactor: separa lógica de validação em arquivo próprio
-   ```
-#### perf – melhoria de performance
-  ```bash
-perf: melhora tempo de resposta no upload da redação
-   ```
-#### test: adição ou modificação de testes
-  ```bash
-test: adiciona testes para service de redação
-   ```
-#### chore – tarefas de manutenção
-  ```bash
-chore: atualiza dependências e configurações do eslint
-   ```
-#### ci – integração contínua
-  ```bash
-ci: adiciona workflow de build e testes no GitHub Actions
-   ```
+- feat - nova funcionalidade
+- fix: correção de bug
+- docs: Alterações na documentação.
+- style: Alterações de formatação, espaçamento, ponto e vírgula, sem alterar código.
+- refactor: Refatoração do código, sem adicionar funcionalidade nem corrigir bug.
+- perf: Alterações que melhoram performance.
+- test: Adição ou alteração de testes.
+- chore: Tarefas de manutenção, scripts, builds, deps, etc.
+- ci: Integração contínua
 ### Relacionamento com Issues (fixes, closes, resolves)
 #### Fechar issue automaticamente
   ```bash
@@ -139,3 +131,5 @@ Rodar:
   ```bash
 npm run dev
    ```
+
+
