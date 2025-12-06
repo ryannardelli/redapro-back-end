@@ -4,7 +4,8 @@
   "description": "Bem-vindo à documentação inicial do projeto!",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/server.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "sequelize": "^6.37.7"
   },
   "devDependencies": {
+    "nodemon": "^3.1.11",
     "sequelize-cli": "^6.6.3"
   }
 }
