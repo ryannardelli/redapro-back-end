@@ -11,6 +11,26 @@ Este repositório contém o código-fonte do back-end, de uma plataforma para co
 - PostgreSQL — Banco de dados relacional utilizado pela aplicação
 - Docker + Docker Compose — Para facilitar deploy e ambiente padronizado
 
+## Estrutura inicial do projeto
+  ```bash
+📁 src/
+ ┣ 📁 controllers/     → Controladores: recebem requisições e chamam serviços
+ ┣ 📁 services/        → Regras de negócio e lógica da aplicação
+ ┣ 📁 repositories/    → Comunicação com o banco (ORM / Queries)
+ ┣ 📁 models/          → Modelos do banco (Sequelize, Prisma ou mongoose)
+ ┣ 📁 routes/          → Rotas organizadas por módulos
+ ┣ 📁 middlewares/     → Middlewares (auth, validações, logs...)
+ ┣ 📁 validators/      → Validações (Joi, Yup, Zod)
+ ┣ 📁 config/          → Configurações (DB, variáveis ambiente, logger)
+ ┣ 📁 utils/           → Helpers, funções utilitárias
+ ┣ 📁 dtos/            → Data Transfer Objects (opcional, mas útil)
+ ┣ 📁 exceptions/      → Classes de erro personalizadas
+ ┣ 📁 adapters/        → Integrações externas (APIs, serviços de terceiros)
+ ┣ server.ts           → Inicialização do servidor Express
+ ┗ app.ts              → Configuração principal do app (middlewares, rotas)
+
+   ```
+
 ## Padrão de Commits (Conventional Commits)
 Este projeto segue o padrão Conventional Commits para manter um histórico organizado, automatizar changelogs e facilitar releases.
 
@@ -111,4 +131,5 @@ Rodar:
   ```bash
 npm run dev
    ```
+
 
