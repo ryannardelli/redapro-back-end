@@ -36,8 +36,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - .:/src
-      - node_modules:/src/node_modules
+       - .:/src
 
 volumes:
   postgres_data:
