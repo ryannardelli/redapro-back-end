@@ -1,20 +1,20 @@
 const request = require("supertest");
-const app = require("../../../../src/app");
-const userService = require("../../../../src/services/userService");
+const app = require("../../../../app");
+const authService = require("../../../../services/authService");
 
-const InvalidEmailError = require("../../../exceptions/domain/user/InvalidEmailError");
-const EmailAlreadyExistsError = require("../../../exceptions/domain/user/EmailAlreadyExistsError");
-const InvalidNameError = require("../../../exceptions/domain/user/InvalidNameError");
-const InvalidPasswordError = require("../../../exceptions/domain/user/InvalidPasswordError ");
+const InvalidEmailError = require("../../../../exceptions/domain/auth/InvalidEmailError");
+const EmailAlreadyExistsError = require("../../../../exceptions/domain/auth/EmailAlreadyExistsError");
+const InvalidNameError = require("../../../../exceptions/domain/auth/InvalidNameError");
+const InvalidPasswordError = require("../../../../exceptions/domain/auth/InvalidPasswordError ");
 
-jest.mock("../../../services/userService");
+jest.mock("../../../../services/authService");
 
-describe("POST /users", () => {
+describe("POST /auth/register", () => {
   it("deve criar usuário com sucesso", async () => {
-    userService.createUser.mockResolvedValue({ id: 1, name: "Ryan", email: "r@test.com" });
+    authService.createUser.mockResolvedValue({ id: 1, name: "Ryan", email: "r@test.com" });
 
     const res = await request(app)
-      .post("/users")
+      .post("/auth/register")
       .send({ name: "Ryan", email: "r@test.com", password: "12345678" });
 
     expect(res.status).toBe(201);
@@ -22,10 +22,10 @@ describe("POST /users", () => {
   });
 
   it("deve retornar erro de nome inválido", async () => {
-    userService.createUser.mockRejectedValue(new InvalidNameError());
+    authService.createUser.mockRejectedValue(new InvalidNameError());
 
     const res = await request(app)
-      .post("/users")
+      .post("/auth/register")
       .send({ name: "R", email: "r@test.com", password: "12345678" });
 
     expect(res.status).toBe(400);
@@ -33,10 +33,10 @@ describe("POST /users", () => {
   });
 
   it("deve retornar erro de email inválido", async () => {
-    userService.createUser.mockRejectedValue(new InvalidEmailError());
+    authService.createUser.mockRejectedValue(new InvalidEmailError());
 
     const res = await request(app)
-      .post("/users")
+      .post("/auth/register")
       .send({ name: "Ryan", email: "email-invalido", password: "12345678" });
 
     expect(res.status).toBe(400);
@@ -44,10 +44,10 @@ describe("POST /users", () => {
   });
 
   it("deve retornar erro de senha inválida", async () => {
-    userService.createUser.mockRejectedValue(new InvalidPasswordError());
+    authService.createUser.mockRejectedValue(new InvalidPasswordError());
 
     const res = await request(app)
-      .post("/users")
+      .post("/auth/register")
       .send({ name: "Ryan", email: "r@test.com", password: "123" });
 
     expect(res.status).toBe(400);
@@ -55,10 +55,10 @@ describe("POST /users", () => {
   });
 
   it("deve retornar erro se email já existe", async () => {
-    userService.createUser.mockRejectedValue(new EmailAlreadyExistsError());
+    authService.createUser.mockRejectedValue(new EmailAlreadyExistsError());
 
     const res = await request(app)
-      .post("/users")
+      .post("/auth/register")
       .send({ name: "Ryan", email: "r@test.com", password: "12345678" });
 
     expect(res.status).toBe(400);

@@ -1,5 +1,5 @@
 class InternalServerError extends Error {
-  constructor(message = "Erro interno do servidor.") {
+  constructor(message = "Aconteceu um erro interno no servidor. Tente novamente mais tarde.") {
     super(message);
     this.name = "InternalServerError";
     this.statusCode = 500;
