@@ -3,10 +3,12 @@ const EmailAlreadyExistsError = require("../../exceptions/domain/auth/EmailAlrea
 const InvalidEmailError = require("../../exceptions/domain/auth/InvalidEmailError");
 const InvalidPasswordError = require("../../exceptions/domain/auth/InvalidPasswordError ");
 const InvalidNameError = require("../../exceptions/domain/auth/InvalidNameError");
+const InvalidCredentialsError = require("../../exceptions/domain/auth/InvalidCredentialsError");
 
 const bcrypt = require("bcryptjs");
 const UserNotFoundError = require("../../exceptions/domain/auth/UserNotFoundError");
-const InvalidCredentialsError = require("../../exceptions/domain/auth/InvalidCredentialsError");
+
+const jwt = require('jsonwebtoken');
 
 async function createUser({ name, email, password }) {
   if (name.length < 2 || name.length > 100) throw new InvalidNameError();
@@ -30,6 +32,16 @@ async function login({ email, password }) {
 
    const passwordMatch = await bcrypt.compare(password, user.password);
    if(!passwordMatch) throw new InvalidCredentialsError();
+   
+   try {
+      const secret = process.env.SECRET;
+      const token = jwt.sign({ id: user.id, email: user.email }, secret, { expiresIn: '1h' });
+
+      return { token };
+   } catch(err) {
+
+   }
+
 }
 
-module.exports = { createUser };
+module.exports = { createUser, login };
