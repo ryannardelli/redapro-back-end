@@ -4,6 +4,8 @@ const InvalidEmailError = require("../../exceptions/domain/user/InvalidEmailErro
 const InvalidPasswordError = require("../../exceptions/domain/user/InvalidPasswordError ");
 const InvalidNameError = require("../../exceptions/domain/user/InvalidNameError");
 
+const bcrypt = require("bcryptjs");
+
 async function createUser({ name, email, password }) {
   if (name.length < 2 || name.length > 100) throw new InvalidNameError();
   if (!/\S+@\S+\.\S+/.test(email)) throw new InvalidEmailError();
@@ -12,7 +14,10 @@ async function createUser({ name, email, password }) {
   const existingEmail = await User.findOne({ where: { email } });
   if (existingEmail) throw new EmailAlreadyExistsError();
 
-  return await User.create({ name, email, password });
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+  return await User.create({ name, email, password: hashedPassword });
 }
 
 module.exports = { createUser };

@@ -10,7 +10,7 @@ function handleError(err, req, res, next) {
 
     // Erros inesperados
     res.status(500).json({
-        message: "Erro interno do servidor"
+        message: "Aconteceu um erro interno no servidor. Tente novamente mais tarde."
     });
 }
 
