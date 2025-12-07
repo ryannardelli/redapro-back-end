@@ -41,7 +41,6 @@ async function login({ email, password }) {
    } catch(err) {
 
    }
-
 }
 
 module.exports = { createUser, login };
