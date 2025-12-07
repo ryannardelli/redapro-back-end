@@ -1,8 +1,8 @@
 const User = require("../../models/User");
-const EmailAlreadyExistsError = require("../../exceptions/domain/user/EmailAlreadyExistsError");
-const InvalidEmailError = require("../../exceptions/domain/user/InvalidEmailError");
-const InvalidPasswordError = require("../../exceptions/domain/user/InvalidPasswordError ");
-const InvalidNameError = require("../../exceptions/domain/user/InvalidNameError");
+const EmailAlreadyExistsError = require("../../exceptions/domain/auth/EmailAlreadyExistsError");
+const InvalidEmailError = require("../../exceptions/domain/auth/InvalidEmailError");
+const InvalidPasswordError = require("../../exceptions/domain/auth/InvalidPasswordError ");
+const InvalidNameError = require("../../exceptions/domain/auth/InvalidNameError");
 
 const bcrypt = require("bcryptjs");
 
