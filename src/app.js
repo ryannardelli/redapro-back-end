@@ -16,7 +16,7 @@ app.use(express.json());
 app.use("/users", userRoutes);
 
 // auth
-app.use("/register", authRoutes);
+app.use("/auth", authRoutes);
 
 // Swagger
 const { swaggerUi, swaggerSpec } = require("./config/swagger");

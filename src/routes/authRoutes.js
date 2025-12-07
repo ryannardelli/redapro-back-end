@@ -37,5 +37,5 @@ const authController = require("../controllers/Auth");
  *         description: Erro na requisição
  */
 
-router.post("/", authController.create);
+router.post("/register", authController.create);
 module.exports = router;
