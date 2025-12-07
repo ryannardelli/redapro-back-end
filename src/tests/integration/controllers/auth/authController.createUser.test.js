@@ -1,13 +1,13 @@
 const request = require("supertest");
-const app = require("../../../app");
-const authService = require("../../../services/authService");
+const app = require("../../../../app");
+const authService = require("../../../../services/authService");
 
-const InvalidEmailError = require("../../../exceptions/domain/auth/InvalidEmailError");
-const EmailAlreadyExistsError = require("../../../exceptions/domain/auth/EmailAlreadyExistsError");
-const InvalidNameError = require("../../../exceptions/domain/auth/InvalidNameError");
-const InvalidPasswordError = require("../../../exceptions/domain/auth/InvalidPasswordError ");
+const InvalidEmailError = require("../../../../exceptions/domain/auth/InvalidEmailError");
+const EmailAlreadyExistsError = require("../../../../exceptions/domain/auth/EmailAlreadyExistsError");
+const InvalidNameError = require("../../../../exceptions/domain/auth/InvalidNameError");
+const InvalidPasswordError = require("../../../../exceptions/domain/auth/InvalidPasswordError ");
 
-jest.mock("../../../services/authService");
+jest.mock("../../../../services/authService");
 
 describe("POST /auth/register", () => {
   it("deve criar usuário com sucesso", async () => {

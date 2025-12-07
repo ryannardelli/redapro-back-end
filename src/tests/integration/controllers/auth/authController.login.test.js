@@ -1,13 +1,13 @@
-const authService = require("../../../services/authService");
-const User = require("../../../models/User");
+const authService = require("../../../../services/authService");
+const User = require("../../../../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const InvalidEmailError = require("../../../exceptions/domain/auth/InvalidEmailError");
-const UserNotFoundError = require("../../../exceptions/domain/auth/UserNotFoundError");
-const InvalidCredentialsError = require("../../../exceptions/domain/auth/InvalidCredentialsError");
+const InvalidEmailError = require("../../../../exceptions/domain/auth/InvalidEmailError");
+const UserNotFoundError = require("../../../../exceptions/domain/auth/UserNotFoundError");
+const InvalidCredentialsError = require("../../../../exceptions/domain/auth/InvalidCredentialsError");
 
-jest.mock("../../../models/User");
+jest.mock("../../../../models/User");
 jest.mock("bcryptjs");
 jest.mock("jsonwebtoken");
 
