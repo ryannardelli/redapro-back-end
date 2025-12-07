@@ -1,3 +1,5 @@
+const InternalServerError = require("../exceptions/common/InternalServerError");
+
 function handleError(err, req, res, next) {
     console.log(err); // log para debug
 
@@ -8,10 +10,10 @@ function handleError(err, req, res, next) {
         });
     }
 
-    // Erros inesperados
-    res.status(500).json({
-        message: "Erro interno do servidor"
-    });
+    const internalError = new InternalServerError();
+    res.status(internalError.statusCode).json({
+        message: internalError.message
+    })
 }
 
 module.exports = handleError;
