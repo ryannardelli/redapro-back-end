@@ -3,6 +3,7 @@ const User = require("../models/user");
 const InvalidEmailError = require("../exceptions/domain/user/InvalidEmailError");
 const InvalidPasswordError = require("../exceptions/domain/user/InvalidPasswordError ");
 const EmailAlreadyExistsError = require("../exceptions/domain/user/EmailAlreadyExistsError");
+const InvalidNameError = require("../exceptions/domain/user/InvalidNameError");
 
 module.exports = {
     async create(req, res, next) {
@@ -15,6 +16,8 @@ module.exports = {
             
             const existingEmail = await User.findOne({ where: { email } });
             if(existingEmail) throw new EmailAlreadyExistsError();
+
+            if(name.length < 2 || name.length > 100) throw new InvalidNameError;
 
             await User.create({ name, email, password });
             res.status(201).json({ message: "Usuário criado com sucesso!" });

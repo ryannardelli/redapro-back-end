@@ -11,6 +11,12 @@ const User = sequelize.define("User", {
     name: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+            len: {
+                args: [2, 100],
+                msg: "O nome precisa ter pelo menos 2 letras e no máximo 100."
+            }
+        }
     },
 
     email: {
