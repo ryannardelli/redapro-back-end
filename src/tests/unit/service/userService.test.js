@@ -1,4 +1,4 @@
-const userService = require("../../../services/userService/createUser");
+const userService = require("../../../services/userService");
 
 const User = require("../../../models/User");
 
