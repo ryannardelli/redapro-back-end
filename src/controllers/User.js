@@ -17,7 +17,7 @@ module.exports = {
             }
 
             const user = await User.create({ name, email, password });
-            res.status(201).json({ message: "Usuário criado!", user });
+            res.status(201).json({ message: "Usuário criado com sucesso!" });
         } catch(error) {
             next(error);
         }
