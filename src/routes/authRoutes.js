@@ -3,6 +3,15 @@ const router = express.Router();
 
 const authController = require("../controllers/Auth");
 
+
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: Operações relacionadas a autenticação
+ */
+
+
 /**
  * @swagger
  * /register:
