@@ -10,6 +10,8 @@ async function connectDB() {
     try {
         await sequelize.authenticate();
         console.log("Conectado ao banco PostgreSQL com sucesso!");
+
+        await sequelize.sync({ alter: true })
     } catch(e) {
         console.log("Erro ao conectar com o banco de dados.", e);
     }
