@@ -1,4 +1,6 @@
+const TokenInvalid = require("../exceptions/TokenInvalid");
 const UnauthorizedError = require("../exceptions/UnauthorizedError");
+const jwt = require("jsonwebtoken");
 
 function checkToken(req, res, next) {
     const authHeader = req.headers['authorization'];
@@ -6,8 +8,18 @@ function checkToken(req, res, next) {
 
     if(!token) throw new UnauthorizedError();
 
-    req.token = token;
-    next();
+    const secret = process.env.SECRET;
+
+    try {
+        const decoded = jwt.verify(token, secret);
+        req.user = decoded;
+        next();
+    } catch (e) {
+        throw new TokenInvalid();
+    }
+
+    // req.token = token;
+    // next();
 }
 
 module.exports = { checkToken };
