@@ -23,5 +23,13 @@ async function updateUser(updateDto) {
     return user.get({ plain: true });
 }
 
+async function deleteUser(id) {
+    const user = await User.findByPk(id);
 
-module.exports = { getAllUsers, getUserById, updateUser };
+    if(!user) throw new UserNotFoundError();
+
+    await user.destroy();
+    return { message: "Usuário excluído com sucesso!" };
+}
+
+module.exports = { getAllUsers, getUserById, updateUser, deleteUser };

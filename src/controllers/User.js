@@ -36,5 +36,16 @@ async function update(req, res, next) {
     }
 }
 
+async function remove(req, res, next) {
+    try {
+        const { id } = req.params;
 
-module.exports = { findAll, findById, update};
+        await userService.deleteUser(id);
+
+        return res.status(200).json({ message: "Usuário excluído com sucesso!" });
+    } catch(e) {
+        next(e);
+    }
+}
+
+module.exports = { findAll, findById, update, remove};

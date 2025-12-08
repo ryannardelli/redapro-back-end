@@ -126,8 +126,46 @@ const userController = require("../controllers/User");
  *                   example: Usuário não encontrado
  */
 
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Exclui um usuário pelo ID
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do usuário a ser deletado
+ *     responses:
+ *       200:
+ *         description: Usuário excluído com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Usuário excluído com sucesso!
+ *       404:
+ *         description: Usuário não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Usuário não encontrado
+ */
+
+
 router.get("/findAll", userController.findAll);
 router.get("/:id", userController.findById);
 router.patch("/:id", userController.update);
+router.delete("/:id", userController.remove);
 
 module.exports = router;
