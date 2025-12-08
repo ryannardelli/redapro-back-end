@@ -17,9 +17,6 @@ function checkToken(req, res, next) {
     } catch (e) {
         throw new TokenInvalid();
     }
-
-    // req.token = token;
-    // next();
 }
 
 module.exports = { checkToken };

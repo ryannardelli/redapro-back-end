@@ -3,6 +3,7 @@ const router = express.Router();
 
 const userController = require("../controllers/User");
 const { checkToken } = require("../middleware/checkToken");
+const authorize = require("../middleware/authorize");
 
 /**
  * @swagger
@@ -168,6 +169,6 @@ const { checkToken } = require("../middleware/checkToken");
 router.get("/findAll", checkToken, userController.findAll);
 router.get("/:id", checkToken, userController.findById);
 router.patch("/:id", checkToken, userController.update);
-router.delete("/:id", checkToken, userController.remove);
+router.delete("/:id", checkToken, authorize(["admin"]), userController.remove);
 
 module.exports = router;
