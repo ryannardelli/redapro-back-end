@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const userController = require("../controllers/User");
+const { checkToken } = require("../middleware/checkToken");
 
 /**
  * @swagger
@@ -163,9 +164,10 @@ const userController = require("../controllers/User");
  */
 
 
-router.get("/findAll", userController.findAll);
-router.get("/:id", userController.findById);
-router.patch("/:id", userController.update);
-router.delete("/:id", userController.remove);
+// private
+router.get("/findAll", checkToken, userController.findAll);
+router.get("/:id", checkToken, userController.findById);
+router.patch("/:id", checkToken, userController.update);
+router.delete("/:id", checkToken, userController.remove);
 
 module.exports = router;
