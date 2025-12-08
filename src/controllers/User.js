@@ -1,6 +1,7 @@
 const userService = require("../services/userService");
 const { toUserDto } = require("../dtos/users/toUserDto");
 const { toUpdateDto } = require("../dtos/users/toUpdateDto");
+const { toRoleUpdateDto } = require("../dtos/users/toRoleUpdateDto");
 
 async function findAll(req, res, next) {
     try {
@@ -48,4 +49,18 @@ async function remove(req, res, next) {
     }
 }
 
-module.exports = { findAll, findById, update, remove};
+async function updateRole(req, res, next) {
+  try {
+    const id = req.params.id;
+    const dto = toRoleUpdateDto(req.body);
+
+    await userService.updateRole(id, dto);
+
+    return res.status(200).json({ message: "Permissão atualizada com sucesso!"});
+
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { findAll, findById, update, remove, updateRole};

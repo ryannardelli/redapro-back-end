@@ -32,4 +32,44 @@ async function deleteUser(id) {
     return { message: "Usuário excluído com sucesso!" };
 }
 
-module.exports = { getAllUsers, getUserById, updateUser, deleteUser };
+// async function updateRole(updateRoleDto) {
+//     const { id, ...updateDataRole } = updateRoleDto;
+//     const user = await User.findByPk(id);
+
+//     if(!user) throw UserNotFoundError();
+
+//     const validateRoles = ["student", "corrector", "admin"];
+    
+//     if(!validateRoles.includes(updateRoleDto.role)) {
+//         throw new InvalidRoleUserError();
+//     }
+
+//     user.role = updateDataRole.role;
+//     await user.save();
+
+//     return { message: "Permissão atualizada com sucesso!" };
+// }
+
+async function updateRole(updateRoleDto) {
+    const { id, role } = updateRoleDto;
+
+    const user = await User.findByPk(id);
+
+    if (!user) {
+        throw new UserNotFoundError();
+    }
+
+    const validRoles = ["student", "corrector", "admin"];
+
+    if (!validRoles.includes(role)) {
+        throw new InvalidRoleUserError();
+    }
+
+    user.role = role;
+    await user.save();
+
+    return { message: "Permissão atualizada com sucesso!" };
+}
+
+
+module.exports = { getAllUsers, getUserById, updateUser, deleteUser, updateRole };

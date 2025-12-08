@@ -164,11 +164,83 @@ const authorize = require("../middleware/authorize");
  *                   example: Usuário não encontrado
  */
 
+/**
+ * @swagger
+ * /users/{id}/role:
+ *   patch:
+ *     summary: Atualiza a permissão (role) de um usuário
+ *     description: Altera a role do usuário para student, corrector ou admin.
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do usuário cuja permissão será alterada
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - role
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 description: Nova permissão do usuário
+ *                 enum: [student, corrector, admin]
+ *                 example: admin
+ *     responses:
+ *       200:
+ *         description: Permissão atualizada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Permissão atualizada com sucesso."
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Requisição inválida
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "JSON malformado."
+ *       404:
+ *         description: Usuário não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Usuário não encontrado."
+ *       422:
+ *         description: Role inválida (não permitida)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Role inválida. Valores permitidos: student, corrector, admin."
+ */
 
-// private
 router.get("/findAll", checkToken, userController.findAll);
 router.get("/:id", checkToken, userController.findById);
 router.patch("/:id", checkToken, userController.update);
 router.delete("/:id", checkToken, authorize(["admin"]), userController.remove);
+router.patch("/:id/role", checkToken, authorize(["admin"]), userController.updateRole);
 
 module.exports = router;
