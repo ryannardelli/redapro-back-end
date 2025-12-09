@@ -18,10 +18,14 @@ async function createUser({ name, email, password }) {
   const existingEmail = await User.findOne({ where: { email } });
   if (existingEmail) throw new EmailAlreadyExistsError();
 
+  const userCount = await User.count();
+
+  const role = userCount === 0 ? "admin" : "student";
+
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  return await User.create({ name, email, password: hashedPassword });
+  return await User.create({ name, email, password: hashedPassword, role });
 }
 
 async function login({ email, password }) {

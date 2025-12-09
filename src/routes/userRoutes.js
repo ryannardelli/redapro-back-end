@@ -166,18 +166,11 @@ const authorize = require("../middleware/authorize");
 
 /**
  * @swagger
- * /users/{id}/role:
+ * /users/updateRole:
  *   patch:
  *     summary: Atualiza a permissão (role) de um usuário
  *     description: Altera a role do usuário para student, corrector ou admin.
  *     tags: [Users]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID do usuário cuja permissão será alterada
  *     requestBody:
  *       required: true
  *       content:
@@ -185,8 +178,13 @@ const authorize = require("../middleware/authorize");
  *           schema:
  *             type: object
  *             required:
+ *               - idUser
  *               - role
  *             properties:
+ *               idUser:
+ *                 type: integer
+ *                 description: ID do usuário cuja permissão será alterada
+ *                 example: 3
  *               role:
  *                 type: string
  *                 description: Nova permissão do usuário
@@ -203,8 +201,6 @@ const authorize = require("../middleware/authorize");
  *                 message:
  *                   type: string
  *                   example: "Permissão atualizada com sucesso."
- *                 user:
- *                   $ref: '#/components/schemas/User'
  *       400:
  *         description: Requisição inválida
  *         content:
@@ -238,9 +234,10 @@ const authorize = require("../middleware/authorize");
  */
 
 router.get("/findAll", checkToken, userController.findAll);
+router.patch("/updateRole", checkToken, authorize(["admin"]), userController.updateRole);
+
 router.get("/:id", checkToken, userController.findById);
 router.patch("/:id", checkToken, userController.update);
 router.delete("/:id", checkToken, authorize(["admin"]), userController.remove);
-router.patch("/:id/role", checkToken, authorize(["admin"]), userController.updateRole);
 
 module.exports = router;

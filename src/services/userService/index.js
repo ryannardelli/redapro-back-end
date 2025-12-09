@@ -1,4 +1,5 @@
 const UserNotFoundError = require("../../exceptions/domain/auth/UserNotFoundError");
+const InvalidRoleUserError = require("../../exceptions/domain/users/InvalidRoleUserError");
 const User = require("../../models/User");
 
 async function getAllUsers() {
@@ -32,28 +33,10 @@ async function deleteUser(id) {
     return { message: "Usuário excluído com sucesso!" };
 }
 
-// async function updateRole(updateRoleDto) {
-//     const { id, ...updateDataRole } = updateRoleDto;
-//     const user = await User.findByPk(id);
+async function updateRole(dto) {
+    const { idUser, role } = dto;
 
-//     if(!user) throw UserNotFoundError();
-
-//     const validateRoles = ["student", "corrector", "admin"];
-    
-//     if(!validateRoles.includes(updateRoleDto.role)) {
-//         throw new InvalidRoleUserError();
-//     }
-
-//     user.role = updateDataRole.role;
-//     await user.save();
-
-//     return { message: "Permissão atualizada com sucesso!" };
-// }
-
-async function updateRole(updateRoleDto) {
-    const { id, role } = updateRoleDto;
-
-    const user = await User.findByPk(id);
+    const user = await User.findByPk(idUser);
 
     if (!user) {
         throw new UserNotFoundError();
@@ -70,6 +53,5 @@ async function updateRole(updateRoleDto) {
 
     return { message: "Permissão atualizada com sucesso!" };
 }
-
 
 module.exports = { getAllUsers, getUserById, updateUser, deleteUser, updateRole };

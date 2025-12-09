@@ -5,3 +5,5 @@ class InvalidRoleUserError extends Error {
         this.statusCode = 422;
     }
 }
+
+module.exports = InvalidRoleUserError;

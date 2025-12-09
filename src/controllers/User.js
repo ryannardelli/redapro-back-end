@@ -51,12 +51,11 @@ async function remove(req, res, next) {
 
 async function updateRole(req, res, next) {
   try {
-    const id = req.params.id;
     const dto = toRoleUpdateDto(req.body);
 
-    await userService.updateRole(id, dto);
+    await userService.updateRole(dto);
 
-    return res.status(200).json({ message: "Permissão atualizada com sucesso!"});
+    return res.status(200).json({ message: "Permissão atualizada com sucesso!" });
 
   } catch (err) {
     next(err);
