@@ -18,10 +18,14 @@ async function createUser({ name, email, password }) {
   const existingEmail = await User.findOne({ where: { email } });
   if (existingEmail) throw new EmailAlreadyExistsError();
 
+  const userCount = await User.count();
+
+  const role = userCount === 0 ? "admin" : "student";
+
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  return await User.create({ name, email, password: hashedPassword });
+  return await User.create({ name, email, password: hashedPassword, role });
 }
 
 async function login({ email, password }) {
@@ -35,7 +39,7 @@ async function login({ email, password }) {
    
    try {
       const secret = process.env.SECRET;
-      const token = jwt.sign({ id: user.id, email: user.email }, secret, { expiresIn: '1h' });
+      const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, secret, { expiresIn: '1h' });
 
       return { token };
    } catch(err) {
