@@ -5,8 +5,8 @@ const User = require("../../../../models/User");
 describe("UserService.getAllUsers", () => {
     it("deve retornar lista de usuários", async() => {
         jest.spyOn(User, 'findAll').mockResolvedValue([
-            { id: 1, name: "Ryan", role: "admin", pictureUrl: "string", createdAt: "string" },
-            { id: 2, name: "João", role: "student", pictureUrl: "string", createdAt: "string" }
+            { id: 1, name: "Ryan", email: 'ryan@email.com', role: "admin", pictureUrl: "string", createdAt: "string" },
+            { id: 2, name: "João", email: 'joao@email.com', role: "student", pictureUrl: "string", createdAt: "string" }
         ]);
 
         const result = await userService.getAllUsers();

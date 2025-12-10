@@ -4,7 +4,7 @@ const UserNotFoundError = require("../../../../exceptions/domain/auth/UserNotFou
 
 describe("userService.getUserById", () => {
     it('deve retornar um usuário existente', async() => {
-        jest.spyOn(User, 'findByPk').mockResolvedValue({ id: 1, name: 'Ryan', role: "admin", pictureUrl: "string", createdAt: "string" });
+        jest.spyOn(User, 'findByPk').mockResolvedValue({ id: 1, name: 'Ryan', email: 'ryan@email.com', role: "admin", pictureUrl: "string", createdAt: "string" });
 
         const user = await userService.getUserById(1);
         expect(user.id).toBe(1);
