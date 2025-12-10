@@ -36,6 +36,25 @@ describe('DELETE /users/:id', () => {
     expect(res.status).toBe(404);
   });
 
+  it('deve retornar 403 se o usuário não for admin ao deletar', async () => {
+  const token = jwt.sign(
+    { id: 2, role: 'student' },
+    process.env.SECRET,
+    { expiresIn: '1h' }
+  );
+
+  const res = await request(app)
+    .delete('/users/1')
+    .set('Authorization', `Bearer ${token}`);
+
+  expect(res.status).toBe(403);
+  expect(res.body).toHaveProperty(
+    'message',
+    'Acesso negado. Você não tem permissão suficiente para acessar esse recurso.'
+  );
+});
+
+
   it('deve retornar erro se token não for fornecido', async () => {
     const res = await request(app).delete('/users/1');
     expect(res.status).toBe(401);

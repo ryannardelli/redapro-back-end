@@ -50,6 +50,26 @@ describe('PATCH /users/updateRole', () => {
     expect(res.status).toBe(422);
   });
 
+  it('deve retornar 403 se o usuário não for admin ao atualizar role', async () => {
+  const token = jwt.sign(
+    { id: 2, role: 'student' },
+    process.env.SECRET,
+    { expiresIn: '1h' }
+  );
+
+  const res = await request(app)
+    .patch('/users/updateRole')
+    .send({ idUser: 1, role: 'admin' })
+    .set('Authorization', `Bearer ${token}`);
+
+  expect(res.status).toBe(403);
+  expect(res.body).toHaveProperty(
+    'message',
+    'Acesso negado. Você não tem permissão suficiente para acessar esse recurso.'
+  );
+});
+
+
   it('deve retornar erro se token não for fornecido', async () => {
     const res = await request(app)
       .patch('/users/updateRole')
