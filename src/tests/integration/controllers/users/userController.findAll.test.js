@@ -1,6 +1,5 @@
 const request = require('supertest');
 const app = require('../../../../app');
-const User = require('../../../../models/User');
 const userService = require('../../../../services/userService');
 const jwt = require('jsonwebtoken');
 
@@ -45,4 +44,19 @@ describe('GET /users/findAll', () => {
     expect(res.status).toBe(201);
     expect(res.body).toEqual([]);
   });
+
+  it('deve retornar erro se o token não for fornecido', async() => {
+    const res = await request(app).get('/users/findAll');
+    expect(res.status).toBe(401);
+    expect(res.body).toHaveProperty('message', 'Acesso negado! Usuário não está autorizado para acessar esse recurso.');
+  });
+
+  it('deve retornar erro se o token for inválido', async() => {
+     const res = await request(app)
+    .get('/users/findAll')
+    .set('Authorization', 'Bearer token_invalido');
+
+    expect(res.status).toBe(400);
+    expect(res.body).toHaveProperty('message', 'Token inválido ou expirado.');
+  })
 });
