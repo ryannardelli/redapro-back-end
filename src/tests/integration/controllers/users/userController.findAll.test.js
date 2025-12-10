@@ -11,7 +11,6 @@ describe('GET /users/findAll', () => {
   let token;
 
   beforeEach(() => {
-    // cria token
     token = jwt.sign(
       { id: 1, role: 'admin' },
       process.env.SECRET,
@@ -23,7 +22,7 @@ describe('GET /users/findAll', () => {
     userService.getAllUsers.mockResolvedValue([
       { id: 1, name: 'Ryan', email: 'ryan@email.com' },
       { id: 2, name: 'João', email: 'joao@email.com' },
-    ]);
+  ]);
 
     const res = await request(app)
       .get('/users/findAll')
