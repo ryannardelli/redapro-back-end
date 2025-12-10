@@ -14,20 +14,21 @@ Este repositório contém o código-fonte do back-end, de uma plataforma para co
 ## Estrutura inicial do projeto
   ```bash
 📁 src/
- ┣ 📁 controllers/     → Controladores: recebem requisições e chamam serviços
- ┣ 📁 services/        → Regras de negócio e lógica da aplicação
- ┣ 📁 repositories/    → Comunicação com o banco (ORM / Queries)
- ┣ 📁 models/          → Modelos do banco (Sequelize, Prisma ou mongoose)
- ┣ 📁 routes/          → Rotas organizadas por módulos
- ┣ 📁 middlewares/     → Middlewares (auth, validações, logs...)
- ┣ 📁 validators/      → Validações (Joi, Yup, Zod)
  ┣ 📁 config/          → Configurações (DB, variáveis ambiente, logger)
- ┣ 📁 utils/           → Helpers, funções utilitárias
+ ┣ 📁 controllers/     → Controladores: recebem requisições e chamam serviços
+ ┣ 📁 database/        → Controladores: recebem requisições e chamam serviços
  ┣ 📁 dtos/            → Data Transfer Objects (opcional, mas útil)
  ┣ 📁 exceptions/      → Classes de erro personalizadas
- ┣ server.ts           → Inicialização do servidor Express
+ ┣ 📁 middlewares/     → Middlewares (auth, validações, logs...)
+ ┣ 📁 models/          → Modelos do banco (Sequelize, Prisma ou mongoose)
+ ┣ 📁 repositories/    → Comunicação com o banco (ORM / Queries)
+ ┣ 📁 routes/          → Rotas organizadas por módulos
+ ┣ 📁 services/        → Regras de negócio e lógica da aplicação
+ ┣ 📁 tests/           → Testes organizados em módulos
+ ┣ 📁 utils/           → Helpers, funções utilitárias
+ ┣ 📁 validators/      → Validações (Joi, Yup, Zod)
  ┗ app.ts              → Configuração principal do app (middlewares, rotas)
-
+ ┣ server.ts           → Inicialização do servidor Express
    ```
 
 ## Padrão de Commits (Conventional Commits)
