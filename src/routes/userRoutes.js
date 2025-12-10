@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const userController = require("../controllers/User");
+const { checkToken } = require("../middleware/checkToken");
+const authorize = require("../middleware/authorize");
 
 /**
  * @swagger
@@ -21,6 +23,221 @@ const userController = require("../controllers/User");
  *         description: Lista de usuários retornada com sucesso
  */
 
-router.get("/findAll", userController.findAll);
+/**
+ * @swagger
+ * /users/{id}:
+ *   get:
+ *     summary: Retorna usuário por ID
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do usuário
+ *     responses:
+ *       200:
+ *         description: Usuário encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   example: João
+ *                 email:
+ *                   type: string
+ *                   example: joao@email.com
+ *       404:
+ *         description: Usuário não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Usuário não encontrado
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         name:
+ *           type: string
+ *           example: João
+ *         email:
+ *           type: string
+ *           example: joao@email.com
+ *         pictureUrl:
+ *           type: string
+ *           example: "https://example.com/avatar.jpg"
+ */
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   patch:
+ *     summary: Atualiza um usuário existente
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do usuário a ser atualizado
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "João da Silva"
+ *     responses:
+ *       200:
+ *         description: Usuário atualizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Usuário não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Usuário não encontrado
+ */
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Exclui um usuário pelo ID
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do usuário a ser deletado
+ *     responses:
+ *       200:
+ *         description: Usuário excluído com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Usuário excluído com sucesso!
+ *       404:
+ *         description: Usuário não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Usuário não encontrado
+ */
+
+/**
+ * @swagger
+ * /users/updateRole:
+ *   patch:
+ *     summary: Atualiza a permissão (role) de um usuário
+ *     description: Altera a role do usuário para student, corrector ou admin.
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - idUser
+ *               - role
+ *             properties:
+ *               idUser:
+ *                 type: integer
+ *                 description: ID do usuário cuja permissão será alterada
+ *                 example: 3
+ *               role:
+ *                 type: string
+ *                 description: Nova permissão do usuário
+ *                 enum: [student, corrector, admin]
+ *                 example: admin
+ *     responses:
+ *       200:
+ *         description: Permissão atualizada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Permissão atualizada com sucesso."
+ *       400:
+ *         description: Requisição inválida
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "JSON malformado."
+ *       404:
+ *         description: Usuário não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Usuário não encontrado."
+ *       422:
+ *         description: Role inválida (não permitida)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Role inválida. Valores permitidos: student, corrector, admin."
+ */
+
+router.get("/findAll", checkToken, userController.findAll);
+router.patch("/updateRole", checkToken, authorize(["admin"]), userController.updateRole);
+
+router.get("/:id", checkToken, userController.findById);
+router.patch("/:id", checkToken, userController.update);
+router.delete("/:id", checkToken, authorize(["admin"]), userController.remove);
 
 module.exports = router;
