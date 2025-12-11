@@ -9,12 +9,15 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    env:
+      SECRET: ${{ secrets.SECRET }}
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          
+
       - name: Instalar dependências
         run: npm install
 
