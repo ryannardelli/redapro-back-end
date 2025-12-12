@@ -10,28 +10,30 @@ const UserNotFoundError = require("../../exceptions/domain/auth/UserNotFoundErro
 
 const jwt = require('jsonwebtoken');
 
+const userRepository = require("../../repositories/userRepository");
+
 async function createUser({ name, email, password }) {
   if (name.length < 2 || name.length > 100) throw new InvalidNameError();
   if (!/\S+@\S+\.\S+/.test(email)) throw new InvalidEmailError();
   if (password.length < 8 || password.length > 20) throw new InvalidPasswordError();
 
-  const existingEmail = await User.findOne({ where: { email } });
+  const existingEmail = await userRepository.findByEmail(email);
   if (existingEmail) throw new EmailAlreadyExistsError();
 
-  const userCount = await User.count();
+  const userCount = await userRepository.countUsers();
 
   const role = userCount === 0 ? "admin" : "student";
 
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  return await User.create({ name, email, password: hashedPassword, role });
+  return await userRepository.create({ name, email, password: hashedPassword, role });
 }
 
 async function login({ email, password }) {
    if (!/\S+@\S+\.\S+/.test(email)) throw new InvalidEmailError();
    
-   const user = await User.findOne({ where: { email } });
+   const user = await userRepository.findByEmail({ where: { email } });
    if(!user) throw new UserNotFoundError();
 
    const passwordMatch = await bcrypt.compare(password, user.password);
