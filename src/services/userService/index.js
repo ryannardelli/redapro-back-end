@@ -1,14 +1,14 @@
 const UserNotFoundError = require("../../exceptions/domain/auth/UserNotFoundError");
 const InvalidRoleUserError = require("../../exceptions/domain/users/InvalidRoleUserError");
-const User = require("../../models/User");
+
+const userRepository = require('../../repositories/userRepository');
 
 async function getAllUsers() {
-    const users = await User.findAll({ raw: true });
-    return users;
+    return userRepository.findAll();
 }
 
 async function getUserById(id) {
-    const user = await User.findByPk(id);
+    const user = await userRepository.findById(id);
     if(!user) throw new UserNotFoundError();
     
     return user;
@@ -16,7 +16,7 @@ async function getUserById(id) {
 
 async function updateUser(updateDto) {
     const { id, ...updatedData } = updateDto;
-    const user = await User.findByPk(id);
+    const user = await userRepository.findById(id);
 
     if(!user) throw new UserNotFoundError();
 
@@ -25,7 +25,7 @@ async function updateUser(updateDto) {
 }
 
 async function deleteUser(id) {
-    const user = await User.findByPk(id);
+    const user = await userRepository.findById(id);
 
     if(!user) throw new UserNotFoundError();
 
@@ -36,7 +36,7 @@ async function deleteUser(id) {
 async function updateRole(dto) {
     const { idUser, role } = dto;
 
-    const user = await User.findByPk(idUser);
+    const user = await userRepository.findById(idUser);
 
     if (!user) {
         throw new UserNotFoundError();
