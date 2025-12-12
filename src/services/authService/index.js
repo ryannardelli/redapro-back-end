@@ -33,7 +33,7 @@ async function createUser({ name, email, password }) {
 async function login({ email, password }) {
    if (!/\S+@\S+\.\S+/.test(email)) throw new InvalidEmailError();
    
-   const user = await userRepository.findByEmail({ where: { email } });
+   const user = await userRepository.findByEmail(email);
    if(!user) throw new UserNotFoundError();
 
    const passwordMatch = await bcrypt.compare(password, user.password);
