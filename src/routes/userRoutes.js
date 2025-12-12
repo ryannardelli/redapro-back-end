@@ -53,6 +53,15 @@ const authorize = require("../middleware/authorize");
  *                 email:
  *                   type: string
  *                   example: joao@email.com
+ *                 role:
+ *                   type: string
+ *                   example: student 
+ *                 pictureUrl:
+ *                   type: string
+ *                   example: string
+ *                 createdAt
+ *                   type: string
+ *                   example: string
  *       404:
  *         description: Usuário não encontrado
  *         content:
