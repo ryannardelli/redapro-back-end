@@ -29,6 +29,9 @@ const Profile = sequelize.define("Profile", {
             }
         }
     }
+}, {
+    tableName: "profile",
+    freezeTableName: true
 })
 
 module.exports = Profile;
