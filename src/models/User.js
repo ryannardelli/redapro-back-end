@@ -44,6 +44,14 @@ const User = sequelize.define("User", {
     pictureUrl: {
         type: DataTypes.STRING,
         allowNull: true,
+    },
+
+     profileId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: "profile",
+            key: "id"
+        }
     }
 }, {
     tableName: "users",

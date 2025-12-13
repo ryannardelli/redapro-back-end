@@ -59,7 +59,7 @@ const authorize = require("../middleware/authorize");
  *                 pictureUrl:
  *                   type: string
  *                   example: string
- *                 createdAt
+ *                 createdAt:
  *                   type: string
  *                   example: string
  *       404:
