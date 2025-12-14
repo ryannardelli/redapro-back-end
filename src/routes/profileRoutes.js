@@ -7,7 +7,7 @@ const authorize = require("../middleware/authorize");
 
 /**
  * @swagger
- * /profiles/findAll:
+ * /profile/findAll:
  *   get:
  *     summary: Retorna todos os perfis
  *     tags: [Profile]
@@ -21,7 +21,7 @@ router.get("/findAll", checkToken, profileController.findAll);
 
 /**
  * @swagger
- * /profiles:
+ * /profile:
  *   post:
  *     summary: Cria um novo perfil
  *     tags: [Profile]
@@ -57,12 +57,19 @@ router.post("/", checkToken, authorize(["admin"]), profileController.create);
 
 /**
  * @swagger
- * /profiles/update:
+ * /profile/{id}:
  *   put:
  *     summary: Atualiza um perfil
  *     tags: [Profile]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do perfil a ser atualizado
  *     requestBody:
  *       required: true
  *       content:
@@ -72,8 +79,10 @@ router.post("/", checkToken, authorize(["admin"]), profileController.create);
  *             properties:
  *               name:
  *                 type: string
+ *                 example: Administrador
  *               description:
  *                 type: string
+ *                 example: Perfil com acesso total ao sistema
  *     responses:
  *       200:
  *         description: Perfil atualizado com sucesso
@@ -83,12 +92,14 @@ router.post("/", checkToken, authorize(["admin"]), profileController.create);
  *         description: Token não fornecido ou inválido
  *       403:
  *         description: Acesso negado (usuário sem permissão)
+ *       404:
+ *         description: Perfil não encontrado
  */
-router.put("/update", checkToken, authorize(["admin"]), profileController.update);
+router.put("/:id", checkToken, authorize(["admin"]), profileController.update);
 
 /**
  * @swagger
- * /profiles/{id}:
+ * /profile/{id}:
  *   get:
  *     summary: Retorna um perfil por ID
  *     tags: [Profile]
@@ -111,7 +122,7 @@ router.get("/:id", checkToken, profileController.findById);
 
 /**
  * @swagger
- * /profiles/{id}:
+ * /profile/{id}:
  *   delete:
  *     summary: Remove um perfil por ID
  *     tags: [Profile]

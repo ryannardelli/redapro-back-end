@@ -26,18 +26,22 @@ async function createProfile(data) {
     return profileRepository.create(data);
 }
 
-async function updateProfile(id, data) {
-    const profile = await getProfileById(id);
+async function updateProfile(updateDto) {
+    const { id, ...updateData } = updateDto;
+    const profile = await profileRepository.findById(id);
 
+
+    if(!profile) throw new ProfileNotFoundError();
     if(profile.name === 'ADMIN') throw new ProfileAdminProtectedUpdateError();
 
-    const existing = await profileRepository.findByName(data.name);
-    if(existing) throw new ProfileAlreadyExistsError(data.name);
+    const existing = await profileRepository.findByName(updateData.name);
+    if(existing) throw new ProfileAlreadyExistsError(updateData.name);
 
-     if(data.length > 50) throw new ProfileNameValidationError();
-    if(data.description && data.description.length > 255) throw new ProfileDescriptionValidationError();
+    if(updateData.length > 50) throw new ProfileNameValidationError();
+    if(updateData.description && updateData.description.length > 255) throw new ProfileDescriptionValidationError();
 
-    return profileRepository.update(id, data);
+    await profile.update(updateData);
+    return profile.get({ plain: true });
 }
 
 async function deleteProfile(id) {
@@ -51,9 +55,7 @@ async function deleteProfile(id) {
     // if (users.length > 0) throw new ProfileInUseError('Não é possível deletar perfil que possui usuários vinculados.');
 
      await profile.destroy();
-      return { message: "Perfil excluído com sucesso!" };
-
-    //  return profileRepository.delete(id);
+     return { message: "Perfil excluído com sucesso!" };
 }
 
 module.exports = { getAllProfile, getProfileById, createProfile, updateProfile, deleteProfile };
