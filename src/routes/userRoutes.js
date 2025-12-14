@@ -242,8 +242,82 @@ const authorize = require("../middleware/authorize");
  *                   example: "Role inválida. Valores permitidos: student, corrector, admin."
  */
 
+/**
+ * @swagger
+ * /users/associateProfile/{id}:
+ *   patch:
+ *     summary: Associa um perfil a um usuário
+ *     description: Associa um perfil (profileId) a um usuário existente.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do usuário
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - profileId
+ *             properties:
+ *               profileId:
+ *                 type: integer
+ *                 description: ID do perfil a ser associado ao usuário
+ *                 example: 2
+ *     responses:
+ *       200:
+ *         description: Perfil associado ao usuário com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Perfil associado ao usuário com sucesso!
+ *       400:
+ *         description: Dados inválidos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "profileId é obrigatório."
+ *       404:
+ *         description: Usuário ou perfil não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Usuário ou perfil não encontrado."
+ *       403:
+ *         description: Acesso negado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Acesso não autorizado."
+ */
+
 router.get("/findAll", checkToken, userController.findAll);
 router.patch("/updateRole", checkToken, authorize(["admin"]), userController.updateRole);
+router.patch("/associateProfile/:id", checkToken, authorize(["admin"]), userController.updateUserProfile);
 
 router.get("/:id", checkToken, userController.findById);
 router.patch("/:id", checkToken, userController.update);
