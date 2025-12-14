@@ -43,13 +43,17 @@ async function updateProfile(id, data) {
 async function deleteProfile(id) {
     const profile = await getProfileById(id);
 
+     if(!profile) throw new ProfileNotFoundError();
      if(profile.name === 'ADMIN') throw new ProfileAdminProtectedDeleteError();
 
       // Verificar se existem usuários vinculados
     // const users = await profileRepository.getUsersByProfile(id);
     // if (users.length > 0) throw new ProfileInUseError('Não é possível deletar perfil que possui usuários vinculados.');
 
-     return profileRepository.delete(id);
+     await profile.destroy();
+      return { message: "Perfil excluído com sucesso!" };
+
+    //  return profileRepository.delete(id);
 }
 
 module.exports = { getAllProfile, getProfileById, createProfile, updateProfile, deleteProfile };

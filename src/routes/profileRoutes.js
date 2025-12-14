@@ -1,18 +1,3 @@
-// const express = require("express");
-// const router = express.Router();
-
-// const profileController = require('../controllers/Profile');
-// const { checkToken } = require("../middleware/checkToken");
-// const authorize = require("../middleware/authorize");
-
-// router.get("/findAll", checkToken, profileController.findAll);
-// router.put("/update", checkToken, authorize(["admin"]), profileController.update);
-
-// router.get("/:id", checkToken, profileController.findById);
-// router.delete("/:id", checkToken, authorize(["admin"]), profileController.remove);
-
-// module.exports = router;
-
 const express = require("express");
 const router = express.Router();
 
@@ -25,7 +10,7 @@ const authorize = require("../middleware/authorize");
  * /profiles/findAll:
  *   get:
  *     summary: Retorna todos os perfis
- *     tags: [Profiles]
+ *     tags: [Profile]
  *     responses:
  *       200:
  *         description: Lista de perfis encontrada
@@ -36,10 +21,46 @@ router.get("/findAll", checkToken, profileController.findAll);
 
 /**
  * @swagger
+ * /profiles:
+ *   post:
+ *     summary: Cria um novo perfil
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - description
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Administrador
+ *               description:
+ *                 type: string
+ *                 example: Perfil com acesso total ao sistema
+ *     responses:
+ *       201:
+ *         description: Perfil criado com sucesso
+ *       400:
+ *         description: Nome ou descrição inválidos ou ausentes
+ *       401:
+ *         description: Token não fornecido ou inválido
+ *       403:
+ *         description: Acesso negado (usuário sem permissão)
+ */
+router.post("/", checkToken, authorize(["admin"]), profileController.create);
+
+/**
+ * @swagger
  * /profiles/update:
  *   put:
  *     summary: Atualiza um perfil
- *     tags: [Profiles]
+ *     tags: [Profile]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -70,7 +91,7 @@ router.put("/update", checkToken, authorize(["admin"]), profileController.update
  * /profiles/{id}:
  *   get:
  *     summary: Retorna um perfil por ID
- *     tags: [Profiles]
+ *     tags: [Profile]
  *     parameters:
  *       - in: path
  *         name: id
@@ -93,7 +114,7 @@ router.get("/:id", checkToken, profileController.findById);
  * /profiles/{id}:
  *   delete:
  *     summary: Remove um perfil por ID
- *     tags: [Profiles]
+ *     tags: [Profile]
  *     parameters:
  *       - in: path
  *         name: id

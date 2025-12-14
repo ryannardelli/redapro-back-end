@@ -15,8 +15,17 @@ async function findAll(req, res, next) {
 async function findById(req, res, next) {
     try {
         const { id } = req.params;
-        const profile = profileSerive.getProfileById(id);
+        const profile = await profileSerive.getProfileById(id);
         res.status(200).json(toProfileDto(profile));
+    } catch(err) {
+        next(err);
+    }
+}
+
+async function create(req, res, next) {
+    try {
+        await profileSerive.createProfile(req.body);
+        res.status(201).json({ message: "Perfil criado com sucesso!" });
     } catch(err) {
         next(err);
     }
@@ -47,4 +56,4 @@ async function remove(req, res, next) {
     }
 }
 
-module.exports = { findAll, findById, update, remove };
+module.exports = { findAll, findById, update, remove, create };
