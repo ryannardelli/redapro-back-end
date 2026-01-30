@@ -37,6 +37,18 @@ async function update(req, res, next) {
     }
 }
 
+async function updateUserProfile(req, res, next) {
+    try {
+        const { id } = req.params;
+        const { profileId } = req.body;
+
+        await userService.updateUserProfile(id, profileId);
+        return res.status(201).json({ message: "Perfil associado ao usuário com sucesso!" });
+    } catch(err) {
+        next(err);
+    }
+}
+
 async function remove(req, res, next) {
     try {
         const { id } = req.params;
@@ -62,4 +74,4 @@ async function updateRole(req, res, next) {
   }
 }
 
-module.exports = { findAll, findById, update, remove, updateRole};
+module.exports = { findAll, findById, update, remove, updateRole, updateUserProfile};

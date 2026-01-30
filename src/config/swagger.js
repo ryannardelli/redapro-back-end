@@ -5,9 +5,9 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "API Redapro",
+      title: "Redapro",
       version: "1.0.0",
-      description: "Documentação da API desenvolvida em Node.js",
+      description: "Documentação para o sistema desenvolvido em Node.js",
     },
   },
   apis: ["./src/routes/*.js"], // Arquivos que contém as rotas com documentação
