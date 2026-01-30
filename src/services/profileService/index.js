@@ -50,9 +50,6 @@ async function deleteProfile(id) {
      if(!profile) throw new ProfileNotFoundError();
      if(profile.name === 'ADMIN') throw new ProfileAdminProtectedDeleteError();
 
-      // Verificar se existem usuários vinculados
-    // const users = await profileRepository.getUsersByProfile(id);
-    // if (users.length > 0) throw new ProfileInUseError('Não é possível deletar perfil que possui usuários vinculados.');
 
      await profile.destroy();
      return { message: "Perfil excluído com sucesso!" };
