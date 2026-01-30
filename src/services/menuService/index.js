@@ -2,9 +2,6 @@ const menuRepository = require("../../repositories/menuRepository");
 const MenuNotFoundError = require("../../exceptions/domain/menu/MenuNotFoundError");
 const RouteAlreadyExistsError = require("../../exceptions/domain/menu/RouteAlreadyExistsError");
 const MenuNameValidationError = require("../../exceptions/domain/menu/MenuNameValidationError");
-const MenuNameValidationError = require("../../exceptions/domain/menu/MenuRouteValidationError");
-const MenuRouteValidationError = require("../../exceptions/domain/menu/MenuRouteValidationError");
-
 async function getAllMenu() {
     return menuRepository.findAll();
 }
