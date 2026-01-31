@@ -1,4 +1,5 @@
 const menuRepository = require("../../repositories/menuRepository");
+
 const MenuNotFoundError = require("../../exceptions/domain/menu/MenuNotFoundError");
 const RouteAlreadyExistsError = require("../../exceptions/domain/menu/RouteAlreadyExistsError");
 const MenuNameValidationError = require("../../exceptions/domain/menu/MenuNameValidationError");
@@ -9,6 +10,7 @@ async function getAllMenu() {
 async function getMenuById(id) {
     const menu = await menuRepository.findById(id);
     if(!menu) throw new MenuNotFoundError();
+    return menu;
 }
 
 async function createMenu(data) {
@@ -30,7 +32,7 @@ async function updateMenu(updateDto) {
     const menu = await menuRepository.findById(id);
 
     if(!menu) throw new MenuNotFoundError();
-    if(exists) throw new MenuRouteValidationError();
+    if(exists) throw new MenuNameValidationError();
 
     await menu.update(updateData);
     return menu.get({ plain: true });
