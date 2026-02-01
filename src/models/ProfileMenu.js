@@ -1,5 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
+const Profile = require("./Profile");
+const Menu = require("./Menu");
 
 const ProfileMenu = sequelize.define("ProfileMenu", {
     id: {
@@ -12,7 +14,7 @@ const ProfileMenu = sequelize.define("ProfileMenu", {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: "profile",
+            model: Profile,
             key: "id",
         }
     },
@@ -21,7 +23,7 @@ const ProfileMenu = sequelize.define("ProfileMenu", {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: "menu",
+            model: Menu,
             key: "id"
         }
     }

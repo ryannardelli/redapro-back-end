@@ -13,10 +13,21 @@ async function connectDB() {
         const User = require("./models/User");
         const Profile = require("./models/Profile");
         const Menu = require("./models/Menu");
+        const ProfileMenu = require("./models/ProfileMenu");
 
         // Definir relacionamento antes de sincronizar
         Profile.hasMany(User, { foreignKey: 'profileId' });
         User.belongsTo(Profile, { foreignKey: 'profileId' });
+
+        Profile.belongsToMany(Menu, {
+            through: ProfileMenu,
+            foreignKey: 'profileId'
+        });
+
+        Menu.belongsToMany(Profile, {
+            through: ProfileMenu,
+            foreignKey: 'menuId'
+        });
 
         // Sincronizar todas as tabelas
         await sequelize.sync({ alter: true });

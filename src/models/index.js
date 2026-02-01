@@ -28,4 +28,4 @@ Menu.belongsToMany(Profile, {
     as: "profile"
 })
 
-module.exports = { User, Profile, ProfileMenu };
+module.exports = { User, Menu, Profile, ProfileMenu };

@@ -145,4 +145,129 @@ router.get("/:id", checkToken, profileController.findById);
  */
 router.delete("/:id", checkToken, authorize(["admin"]), profileController.remove);
 
+/**
+ * @swagger
+ * /profile/associateMenu/{id}:
+ *   patch:
+ *     summary: Associa um menu a um perfil
+ *     description: Associa um menu (menuId) a um perfil existente.
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do perfil
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - menuId
+ *             properties:
+ *               menuId:
+ *                 type: integer
+ *                 description: ID do menu a ser associado ao perfil
+ *                 example: 3
+ *     responses:
+ *       200:
+ *         description: Menu associado ao perfil com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Menu associado ao perfil com sucesso!
+ *       400:
+ *         description: Dados inválidos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "menuId é obrigatório."
+ *       404:
+ *         description: Perfil ou menu não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Perfil ou menu não encontrado."
+ *       403:
+ *         description: Acesso negado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Acesso não autorizado."
+ */
+
+router.patch("/associateMenu/:id", checkToken, authorize(["admin"]), profileController.associateMenuToProfile);
+
+/**
+ * @swagger
+ * /profile/menus/{id}:
+ *   get:
+ *     summary: Retorna todos os menus associados a um perfil
+ *     description: Retorna a lista de menus vinculados a um perfil existente.
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do perfil
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: Lista de menus do perfil
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   name:
+ *                     type: string
+ *                     example: Dashboard
+ *                   route:
+ *                     type: string
+ *                     example: /dashboard
+ *                   icon:
+ *                     type: string
+ *                     example: home
+ *       401:
+ *         description: Token não fornecido ou inválido
+ *       404:
+ *         description: Perfil não encontrado
+ */
+router.get(
+  "/menus/:id",
+  checkToken,
+  profileController.findMenusByProfile
+);
+
 module.exports = router;
