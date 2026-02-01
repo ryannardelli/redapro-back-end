@@ -14,10 +14,18 @@ async function connectDB() {
         const Profile = require("./models/Profile");
         const Menu = require("./models/Menu");
         const ProfileMenu = require("./models/ProfileMenu");
+        const Essay = require("./models/Essay");
+        const Category = require("./models/Category");
 
         // Definir relacionamento antes de sincronizar
         Profile.hasMany(User, { foreignKey: 'profileId' });
         User.belongsTo(Profile, { foreignKey: 'profileId' });
+
+        User.hasMany(Essay, { foreignKey: "userId", as: "essay" });
+        Essay.belongsTo(User, { foreignKey: "userId", as: "user" });
+
+        Category.hasMany(Essay, { foreignKey: "categoryId", as: "essay" });
+        Essay.belongsTo(Category, { foreignKey: "categoryId", as: "category" })
 
         Profile.belongsToMany(Menu, {
             through: ProfileMenu,
