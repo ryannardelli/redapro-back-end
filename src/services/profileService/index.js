@@ -1,9 +1,11 @@
+const MenuNotFoundError = require('../../exceptions/domain/menu/MenuNotFoundError');
 const ProfileAdminProtectedDeleteError = require('../../exceptions/domain/profile/ProfileAdminProtectedDeleteError');
 const ProfileAdminProtectedUpdateError = require('../../exceptions/domain/profile/ProfileAdminProtectedUpdateError');
 const ProfileAlreadyExistsError = require('../../exceptions/domain/profile/ProfileAlreadyExistsError');
 const ProfileDescriptionValidationError = require('../../exceptions/domain/profile/ProfileDescriptionValidationError');
 const ProfileNameValidationError = require('../../exceptions/domain/profile/ProfileNameValidationError');
 const ProfileNotFoundError = require('../../exceptions/domain/profile/ProfileNotFoundError');
+const menuRepository = require('../../repositories/menuRepository');
 const profileRepository = require('../../repositories/profileRepository');
 
 async function getAllProfile() {
@@ -14,6 +16,13 @@ async function getProfileById(id) {
     const profile = await profileRepository.findById(id);
     if(!profile) throw new ProfileNotFoundError();
     return profile;
+}
+
+async function getMenusByProfile(profileId) {
+    const profile = await profileRepository.findByWithMenus(profileId);
+    if(!profile) throw new ProfileNotFoundError();
+
+    return profile.Menus;
 }
 
 async function createProfile(data) {
@@ -44,18 +53,28 @@ async function updateProfile(updateDto) {
     return profile.get({ plain: true });
 }
 
+async function associateMenuToProfile(profileId, menuId) {
+    const profile = await profileRepository.findById(profileId);
+    if(!profile) throw new ProfileNotFoundError();
+
+    const menu = await menuRepository.findById(menuId);
+    if(!menu) throw new MenuNotFoundError();
+
+    await profile.addMenus(menu);
+
+    return profile;
+
+}
+
 async function deleteProfile(id) {
     const profile = await getProfileById(id);
 
      if(!profile) throw new ProfileNotFoundError();
      if(profile.name === 'ADMIN') throw new ProfileAdminProtectedDeleteError();
 
-      // Verificar se existem usuários vinculados
-    // const users = await profileRepository.getUsersByProfile(id);
-    // if (users.length > 0) throw new ProfileInUseError('Não é possível deletar perfil que possui usuários vinculados.');
 
      await profile.destroy();
      return { message: "Perfil excluído com sucesso!" };
 }
 
-module.exports = { getAllProfile, getProfileById, createProfile, updateProfile, deleteProfile };
+module.exports = { getAllProfile, getProfileById, createProfile, updateProfile, deleteProfile, associateMenuToProfile, getMenusByProfile };
