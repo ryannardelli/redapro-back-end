@@ -1,5 +1,7 @@
 const UserNotFoundError = require("../../exceptions/domain/auth/UserNotFoundError");
+const ProfileNotFoundError = require("../../exceptions/domain/profile/ProfileNotFoundError");
 const InvalidRoleUserError = require("../../exceptions/domain/users/InvalidRoleUserError");
+const profileRepository = require("../../repositories/profileRepository");
 
 const userRepository = require('../../repositories/userRepository');
 
@@ -54,4 +56,18 @@ async function updateRole(dto) {
     return { message: "Permissão atualizada com sucesso!" };
 }
 
-module.exports = { getAllUsers, getUserById, updateUser, deleteUser, updateRole };
+async function updateUserProfile(userId, profileId) {
+    const user = await userRepository.findById(userId);
+    if(!user) throw new UserNotFoundError();
+
+    const profile = await profileRepository.findById(profileId);
+    if(!profile) throw new ProfileNotFoundError();
+
+    user.profileId = profile.id;
+    await userRepository.save(user);
+
+    return user;
+
+}
+
+module.exports = { getAllUsers, getUserById, updateUser, deleteUser, updateRole, updateUserProfile };
