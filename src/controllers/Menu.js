@@ -1,4 +1,3 @@
-const { escape } = require('sequelize/lib/sql-string');
 const { toMenuDto } = require('../dtos/menu/toMenuDto');
 const { toUpdateDto } = require('../dtos/menu/toUpdateDto');
 const menuService = require('../services/menuService');
