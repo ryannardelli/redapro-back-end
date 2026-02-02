@@ -56,4 +56,4 @@ async function remove(req, res, next) {
     }
 }
 
-module.exports = { findAll, findById, create, remove };
+module.exports = { findAll, findById, update, create, remove };
