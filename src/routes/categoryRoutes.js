@@ -120,4 +120,30 @@ router.post("/", checkToken, authorize(["admin"]), categoryController.create);
  */
 router.put("/:id", checkToken, authorize(["admin"]), categoryController.update);
 
+/**
+ * @swagger
+ * /category/{id}:
+ *   delete:
+ *     summary: Deleta uma categoria
+ *     tags: [Category]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID da categoria a ser deletada
+ *     responses:
+ *       200:
+ *         description: Categoria deletada com sucesso
+ *       401:
+ *         description: Token não fornecido ou inválido
+ *       403:
+ *         description: Acesso negado (usuário sem permissão)
+ *       404:
+ *         description: Categoria não encontrada
+ */
+router.delete("/:id", checkToken, authorize(["admin"]), categoryController.remove);
 module.exports = router;
