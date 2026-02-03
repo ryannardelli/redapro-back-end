@@ -7,6 +7,7 @@ const EssayUpdateNotAllowedError = require('../../exceptions/domain/essay/EssayU
 const EssayValidationContentError = require('../../exceptions/domain/essay/EssayValidationContentError');
 const EssayValidationTitleError = require('../../exceptions/domain/essay/EssayValidationTitleError');
 const essayRepository = require('../../repositories/essayRepository');
+const categoryRepository = require('../../repositories/categoryRepository');
 
 async function getAllEssay() {
     return essayRepository.findAll();
@@ -29,7 +30,7 @@ async function createEssay(data, userId) {
     const existing = await essayRepository.findByTitle(
         data.title,
         userId,
-        data.category_id
+        data.categoryId
     );
 
     if (existing) {
@@ -37,11 +38,11 @@ async function createEssay(data, userId) {
     }
 
     if (!data.title || data.title.trim().length < 5 || data.title.trim().length > 50) {
-        throw new EssayTitleValidationError();
+        throw new EssayValidationTitleError();
     }
 
     if (!data.content || data.content.trim().length < 1000 || data.content.trim().length > 5000) {
-        throw new EssayContentValidationError();
+        throw new EssayValidationContentError();
     }
     if (data.note !== undefined && data.note !== null) {
         throw new EssayNoteNotAllowedError();
@@ -50,8 +51,8 @@ async function createEssay(data, userId) {
     return essayRepository.create({
         title: data.title.trim(),
         content: data.content.trim(),
-        category_id: data.category_id,
-        user_id: userId,
+        category_id: data.categoryId,
+        userId: userId,
         status: "PENDENTE",
         note: null
     });

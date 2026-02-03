@@ -6,8 +6,8 @@ module.exports = {
     findByTitle(title, userId, categoryId) {
         const where = { title };
 
-        if (userId) where.user_id = userId;
-        if (categoryId) where.category_id = categoryId;
+        if (userId) where.userId = userId;
+        if (categoryId) where.categoryId = categoryId;
 
         return Essay.findOne({ where });
     },

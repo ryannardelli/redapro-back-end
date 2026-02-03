@@ -3,11 +3,10 @@ const router = express.Router();
 
 const essayController = require("../controllers/Essay");
 const { checkToken } = require("../middleware/checkToken");
-const authorize = require("../middleware/authorize");
 
 /**
  * @swagger
- * /essay:
+ * /essay/findAll:
  *   get:
  *     summary: Lista todas as redações
  *     tags: [Essay]
@@ -135,3 +134,5 @@ router.put("/:id", checkToken, essayController.update);
  *         description: Redação não encontrada
  */
 router.delete("/:id", checkToken, essayController.create);
+
+module.exports = router;
