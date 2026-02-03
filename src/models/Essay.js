@@ -8,6 +8,17 @@ const Essay = sequelize.define("Essay", {
         autoIncrement: true
     },
 
+    title: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+    validate: {
+        len: {
+            args: [5, 50],
+            msg: "O título deve ter entre 5 e 50 caracteres."
+        },
+    },
+},
+
     content: {
     type: DataTypes.TEXT,
     allowNull: false,

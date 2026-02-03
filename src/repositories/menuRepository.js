@@ -1,5 +1,4 @@
 const Menu = require("../models/Menu");
-const { update } = require("./profileRepository");
 
 module.exports = {
     findAll: () => Menu.findAll({ order: [["id", "ASC"]] }),
