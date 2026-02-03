@@ -1,7 +1,58 @@
+const { toEssayDto } = require('../dtos/essay/toEssayDto');
+const { toUpdateDto } = require('../dtos/essay/toUpdateDto');
+const essayService = require('../services/essayService');
+
 async function findAll(req, res, next) {
     try {
-        const essay = await
+        const essay = await essayService.getAllEssay();
+        const essayDto = essay.map(toEssayDto);
+        return res.status(200).json(essayDto);
     } catch(err) {
         next(err);
     }
 }
+
+async function findById(req, res, next) {
+    try {
+        const { id } = req.params;
+        const essay = await essayService.getEssayById(id);
+        res.status(200).json(toEssayDto(essay));
+    } catch(err) {
+        next(err);
+    }
+}
+
+async function create(req, res, next) {
+    try {
+        await essayService.createEssay(req.body);
+        res.status(201).json({ message: "Redação criada com sucesso!" });
+    } catch(err) {
+        next(err);
+    }
+}
+
+async function update(req, res, next) {
+    try {
+        const updateDto = {
+            id: req.params.id,
+            ...toUpdateDto(req.body)
+        }
+
+        await essayService.updateEssay(updateDto);
+        res.status(200).json({ message: "Redação atualizada com sucesso!" });
+    } catch(err) {
+        next(err);
+    }
+}
+
+async function remove(req, res, next) {
+    try {
+        const { id } = req.params;
+        await essayService.deleteEssay(id);
+
+        return res.status(200).json({ message: "Redação excluída com sucesso!" });
+    } catch(err) {
+        next(err);
+    }
+}
+module.exports = { findAll, findById, update, remove, create };

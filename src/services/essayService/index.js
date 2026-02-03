@@ -110,4 +110,4 @@ async function deleteEssay(id) {
      return { message: "Redação excluída com sucesso!" };
 };
 
-module.exports = { getAllEssay, getEssayById, updateEssay, deleteEssay };
+module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay };
