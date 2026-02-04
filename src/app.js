@@ -5,6 +5,8 @@ const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const menuRoutes = require("./routes/menuRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
+const essayRoutes = require("./routes/essayRoutes");
 const handleError = require("./middleware/handleError");
 
 const app = express();
@@ -25,6 +27,12 @@ app.use("/profile", profileRoutes);
 
 // menu
 app.use("/menu", menuRoutes);
+
+// category
+app.use("/category", categoryRoutes);
+
+// essay
+app.use("/essay", essayRoutes);
 
 // Swagger
 const { swaggerUi, swaggerSpec } = require("./config/swagger");

@@ -33,7 +33,7 @@ async function updateMenu(updateDto) {
     const menu = await menuRepository.findById(id);
 
     if(!menu) throw new MenuNotFoundError();
-    if(exists) throw new MenuNameValidationError();
+    if(exists) throw new RouteAlreadyExistsError();
 
     await menu.update(updateData);
     return menu.get({ plain: true });
