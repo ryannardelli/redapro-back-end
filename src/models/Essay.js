@@ -64,6 +64,11 @@ const Essay = sequelize.define("Essay", {
       model: "categories",
       key: "id"
     }
+  },
+
+  reviewerId: {
+    type: DataTypes.INTEGER,
+    allowNull: true
   }
 });
 

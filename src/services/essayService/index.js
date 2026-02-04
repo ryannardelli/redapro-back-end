@@ -127,4 +127,21 @@ async function deleteEssay(id) {
      return { message: "Redação excluída com sucesso!" };
 };
 
-module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser };
+async function startReview(essayId, reviewrId) {
+    const essay = await essayRepository.findById(essayId);
+
+    if(!essay) throw new EssayNotFoundError();
+
+    if(essay.status !== "PENDENTE") {
+        throw new EssayUpdateNotAllowedError();
+    }
+
+    essay.status = "EM_CORRECAO";
+    essay.reviewrId = reviewrId;
+
+    await essay.save();
+
+    return essay;
+}
+
+module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser, startReview };

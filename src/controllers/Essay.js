@@ -75,4 +75,27 @@ async function findEssayByUser(req, res, next) {
     }
 }
 
-module.exports = { findAll, findById, update, remove, create, findEssayByUser };
+async function startReview(req, res, next) {
+    try {
+        const essayId = Number(req.params.id);
+        const reviewerId = req.user.id;
+
+        const essay = await essayService.startReview(essayId, reviewerId);
+
+        const io = req.app.get("io");
+
+        io.to(`user_${essay.userId}`).emit("essay:status", {
+            essayId: essay.id,
+            status: essay.status,
+            message: "Sua redação entrou em correção."
+        });
+
+        return res.status(200).json({
+            message: "Correção iniciada com sucesso."
+        });
+    } catch(err) {
+        next(err);
+    }
+}
+
+module.exports = { findAll, findById, update, remove, create, findEssayByUser, startReview };

@@ -220,4 +220,50 @@ router.get(
   essayController.findEssayByUser
 );
 
+/**
+ * @swagger
+ * /essay/{id}/start-review:
+ *   patch:
+ *     summary: Inicia a correção de uma redação
+ *     description: >
+ *       Altera o status da redação para EM_CORRECAO e
+ *       associa o corretor autenticado à redação.
+ *       Também notifica o aluno via Socket.IO.
+ *     tags: [Essay]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID da redação
+ *         schema:
+ *           type: integer
+ *           example: 12
+ *     responses:
+ *       200:
+ *         description: Correção iniciada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Correção iniciada com sucesso
+ *       400:
+ *         description: Redação não pode ser colocada em correção
+ *       403:
+ *         description: Usuário não tem permissão para corrigir
+ *       404:
+ *         description: Redação não encontrada
+ *       401:
+ *         description: Token inválido ou ausente
+ */
+router.patch(
+  "/:id/start-review",
+  checkToken,
+  essayController.startReview
+);
+
 module.exports = router;
