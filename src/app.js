@@ -15,23 +15,11 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-
-// user
 app.use("/users", userRoutes);
-
-// auth
 app.use("/auth", authRoutes);
-
-// profile
 app.use("/profile", profileRoutes);
-
-// menu
 app.use("/menu", menuRoutes);
-
-// category
 app.use("/category", categoryRoutes);
-
-// essay
 app.use("/essay", essayRoutes);
 
 // Swagger

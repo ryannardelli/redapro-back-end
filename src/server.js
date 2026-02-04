@@ -2,6 +2,8 @@ require("dotenv").config();
 
 const app = require("./app");
 const PORT = process.env.PORT || 3000;
+const setupSocket = require("./config/socket");
+const http = require("http");
 
 const sequelize = require("./config/database");
 
@@ -49,7 +51,11 @@ async function connectDB() {
 async function startServer() {
     await connectDB();
 
-    app.listen(PORT, () => {
+    const server = http.createServer(app);
+
+    setupSocket(server, app);
+
+    server.listen(PORT, () => {
         console.log(`Servidor rodando na porta ${PORT}`);
     });
 }
