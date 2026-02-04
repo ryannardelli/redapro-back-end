@@ -274,8 +274,8 @@ router.patch(
  *   patch:
  *     summary: Finaliza a correção de uma redação
  *     description: >
- *       Finaliza a correção da redação, atribuindo a nota final
- *       e alterando o status para CORRIGIDA.
+ *       Finaliza a correção da redação, atribuindo as notas das competências,
+ *       calculando a nota final automaticamente e alterando o status para CORRIGIDA.
  *     tags: [Essay]
  *     security:
  *       - bearerAuth: []
@@ -294,12 +294,36 @@ router.patch(
  *           schema:
  *             type: object
  *             required:
- *               - note
+ *               - c1
+ *               - c2
+ *               - c3
+ *               - c4
+ *               - c5
  *             properties:
- *               note:
+ *               c1:
  *                 type: integer
- *                 example: 900
- *                 description: Nota final da redação (0 a 1000)
+ *                 example: 160
+ *                 description: Nota da competência 1 (0 a 200)
+ *               c2:
+ *                 type: integer
+ *                 example: 180
+ *                 description: Nota da competência 2 (0 a 200)
+ *               c3:
+ *                 type: integer
+ *                 example: 170
+ *                 description: Nota da competência 3 (0 a 200)
+ *               c4:
+ *                 type: integer
+ *                 example: 150
+ *                 description: Nota da competência 4 (0 a 200)
+ *               c5:
+ *                 type: integer
+ *                 example: 140
+ *                 description: Nota da competência 5 (0 a 200)
+ *               generalFeedback:
+ *                 type: string
+ *                 example: "Bom desenvolvimento das ideias, mas precisa melhorar a coesão."
+ *                 description: Feedback geral do corretor sobre a redação
  *     responses:
  *       200:
  *         description: Correção finalizada com sucesso
@@ -326,6 +350,5 @@ router.patch(
   authorize(["corrector"]),
   essayController.finishReview
 );
-
 
 module.exports = router;
