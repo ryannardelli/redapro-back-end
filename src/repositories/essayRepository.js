@@ -12,7 +12,7 @@ module.exports = {
 
         return Essay.findOne({ where });
     },
-    
+
     findByWithUsers: (id) => {
     return User.findByPk(id, {
         include: [{
@@ -22,16 +22,6 @@ module.exports = {
         }]
     });
 },
-
-    // findByWithUsers: (id) => {
-    //     User.findByPk(id, {
-    //         include: [{
-    //             model: Essay,
-    //             as: "essay",
-    //             include: ["category"]
-    //         }]
-    //     });
-    // },
     create: (data) => Essay.create(data),
     update: (essay, data) => essay.update(data),
     delete: (essay) => essay.destroy(),
