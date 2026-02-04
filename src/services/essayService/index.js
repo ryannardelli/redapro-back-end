@@ -10,6 +10,7 @@ const EssayValidationTitleError = require('../../exceptions/domain/essay/EssayVa
 const essayRepository = require('../../repositories/essayRepository');
 const categoryRepository = require('../../repositories/categoryRepository');
 const userRepository = require('../../repositories/userRepository');
+const InvalidCompetenceError = require('../../exceptions/domain/essay/InvalidCompetenceError');
 
 async function getAllEssay(filters = {}) {
     return essayRepository.findAll(filters);
@@ -151,7 +152,24 @@ async function finishReview(essayId, reviewerId, data) {
     if(essay.reviewerId !== reviewerId) throw new EssayForbiddenError();
     if(essay.status !== "EM_CORRECAO") throw new EssayUpdateNotAllowedError();
 
-    essay.note = data.note,
+    const competencies = ["c1", "c2", "c3", "c4", "c5"];
+    for (let c of competencies) {
+        if (data[c] !== undefined && (data[c] < 0 || data[c] > 200)) {
+            throw new InvalidCompetenceError(`Nota da competência ${c} inválida.`);
+        }
+    }
+
+    essay.c1 = data.c1;
+    essay.c2 = data.c2;
+    essay.c3 = data.c3;
+    essay.c4 = data.c4;
+    essay.c5 = data.c5;
+
+     essay.note = [essay.c1, essay.c2, essay.c3, essay.c4, essay.c5]
+        .reduce((acc, val) => acc + (val || 0), 0);
+
+    essay.generalFeedback = data.generalFeedback; 
+
     essay.status = "CORRIGIDA"
 
     await essay.save();

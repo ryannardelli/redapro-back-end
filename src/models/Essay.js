@@ -33,6 +33,51 @@ const Essay = sequelize.define("Essay", {
     }
   },
 
+  c1: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    validate: {
+      min: 0,
+      max: 200,
+    }
+  },
+
+  c2: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    validate: {
+      min: 0,
+      max: 200,
+    }
+  },
+
+  c3: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    validate: {
+      min: 0,
+      max: 200,
+    }
+  },
+
+  c4: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    validate: {
+      min: 0,
+      max: 200,
+    }
+  },
+
+  c5: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    validate: {
+      min: 0,
+      max: 200,
+    }
+  },
+
   note: {
     type: DataTypes.INTEGER,
     allowNull: true,
@@ -40,6 +85,11 @@ const Essay = sequelize.define("Essay", {
       min: 0,
       max: 1000
     }
+  },
+
+  generalFeedback: { 
+    type: DataTypes.TEXT,  
+    allowNull: true
   },
 
   status: {

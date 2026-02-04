@@ -99,32 +99,31 @@ async function startReview(req, res, next) {
 }
 
 async function finishReview(req, res, next) {
-  try {
-    const essayId = Number(req.params.id);
-    const reviewerId = req.user.id;
-    const { note } = req.body;
+    try {
+        const essayId = Number(req.params.id);
+        const reviewerId = req.user.id;
 
-    const essay = await essayService.finishReview(
-      essayId,
-      reviewerId,
-      { note }
-    );
+        // Recebendo todas as competências e feedback do corpo da requisição
+        const { c1, c2, c3, c4, c5, generalFeedback } = req.body;
 
-    const io = req.app.get("io");
+        const essay = await essayService.finishReview(
+            essayId,
+            reviewerId,
+            { c1, c2, c3, c4, c5, generalFeedback }
+        );
 
-    io.to(`user_${essay.userId}`).emit("essay:status", {
-      essayId: essay.id,
-      status: essay.status,
-      message: "Sua redação foi corrigida."
-    });
+        const io = req.app.get("io");
 
-    return res.status(200).json({
-      message: "Correção finalizada com sucesso."
-    });
-  } catch (err) {
-    next(err);
-  }
+        io.to(`user_${essay.userId}`).emit("essay:status", {
+            message: "Sua redação foi corrigida."
+        });
+
+        return res.status(200).json({
+            message: "Correção finalizada com sucesso.",
+        });
+    } catch (err) {
+        next(err);
+    }
 }
-
 
 module.exports = { findAll, findById, update, remove, create, findEssayByUser, startReview, finishReview };
