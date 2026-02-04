@@ -34,29 +34,33 @@ async function create(req, res, next) {
     }
 }
 
+async function update(req, res, next) {
+    try {
+        const essayId = Number(req.params.id);
+        const updateDto = toUpdateDto(req.body);
+        const userId = req.user.id;
 
-// async function create(req, res, next) {
+        await essayService.updateEssay(essayId, updateDto, userId);
+
+        res.status(200).json({ message: "Redação atualizada com sucesso!" });
+    } catch (err) {
+        next(err);
+    }
+}
+
+// async function update(req, res, next) {
 //     try {
-//         await essayService.createEssay(req.body, req.user.id);
-//         res.status(201).json({ message: "Redação criada com sucesso!" });
+//         const updateDto = {
+//             id: req.params.id,
+//             ...toUpdateDto(req.body)
+//         }
+
+//         await essayService.updateEssay(updateDto);
+//         res.status(200).json({ message: "Redação atualizada com sucesso!" });
 //     } catch(err) {
 //         next(err);
 //     }
 // }
-
-async function update(req, res, next) {
-    try {
-        const updateDto = {
-            id: req.params.id,
-            ...toUpdateDto(req.body)
-        }
-
-        await essayService.updateEssay(updateDto);
-        res.status(200).json({ message: "Redação atualizada com sucesso!" });
-    } catch(err) {
-        next(err);
-    }
-}
 
 async function remove(req, res, next) {
     try {

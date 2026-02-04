@@ -3,10 +3,12 @@ function toEssayDto(essay) {
         id: essay.id,
         title: essay.title,
         content: essay.content,
-        note: essay.note,
-        status: essay.status,
-        userId: essay.user_id,
-        categoryId: essay.category_id,
+        note: essay.note ?? null,
+        status: essay.status ?? null,
+        userId: essay.userId ?? null,
+        categoryId: essay.categoryId ?? null,
+        createdAt: essay.createdAt ?? null,
+        updatedAt: essay.updatedAt ?? null
     }
 }
 

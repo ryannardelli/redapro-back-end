@@ -1,5 +1,6 @@
 const EssayAlreadyExistsError = require('../../exceptions/domain/essay/EssayAlreadyExistsError');
 const EssayCategoryNotFoundError = require('../../exceptions/domain/essay/EssayCategoryNotFoundError');
+const UserNotFoundError = require('../../exceptions/domain/auth/UserNotFoundError');
 const EssayForbiddenError = require('../../exceptions/domain/essay/EssayForbiddenError');
 const EssayNoteNotAllowedError = require('../../exceptions/domain/essay/EssayNoteNotAllowedError');
 const EssayNotFoundError = require('../../exceptions/domain/essay/EssayNotFoundError');
@@ -28,6 +29,10 @@ async function createEssay(data, userId) {
         throw new EssayCategoryNotFoundError();
     }
 
+    if(!user) {
+        throw new UserNotFoundError();
+    }
+
     // Evitar duplicidade (title + user + category)
     const existing = await essayRepository.findByTitle(
         data.title,
@@ -53,8 +58,8 @@ async function createEssay(data, userId) {
     return essayRepository.create({
         title: data.title.trim(),
         content: data.content.trim(),
-        category_id: data.category_id,
-        user_id: userId,
+        categoryId: data.category_id,
+        userId: userId,
         status: "PENDENTE",
         note: null
     });
@@ -69,7 +74,7 @@ async function updateEssay(essayId, updateDto, userId) {
     }
 
     // Garantir que o usuário é o dono
-    if (essay.user_id !== userId) {
+    if (essay.userId !== userId) {
         throw new EssayForbiddenError();
     }
 
