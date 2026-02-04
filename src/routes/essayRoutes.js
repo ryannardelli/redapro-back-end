@@ -3,6 +3,7 @@ const router = express.Router();
 
 const essayController = require("../controllers/Essay");
 const { checkToken } = require("../middleware/checkToken");
+const authorize = require("../middleware/authorize");
 
 /**
  * @swagger
@@ -263,6 +264,7 @@ router.get(
 router.patch(
   "/:id/start-review",
   checkToken,
+  authorize(["corrector"]),
   essayController.startReview
 );
 
@@ -321,6 +323,7 @@ router.patch(
 router.patch(
   "/:id/finish-review",
   checkToken,
+  authorize(["corrector"]),
   essayController.finishReview
 );
 
