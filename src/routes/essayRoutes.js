@@ -55,12 +55,20 @@ router.get("/:id", checkToken, essayController.findById);
 
 /**
  * @swagger
- * /essay:
+ * /essay/{userId}:
  *   post:
- *     summary: Cria uma nova redação
+ *     summary: Cria uma nova redação para um usuário
  *     tags: [Essay]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do usuário que está criando a redação
+ *         schema:
+ *           type: integer
+ *           example: 1
  *     requestBody:
  *       required: true
  *       content:
@@ -72,10 +80,12 @@ router.get("/:id", checkToken, essayController.findById);
  *         description: Redação criada com sucesso
  *       400:
  *         description: Dados inválidos
+ *       404:
+ *         description: Usuário ou categoria não encontrados
  *       409:
  *         description: Redação já existente
  */
-router.post("/", checkToken, essayController.create);
+router.post("/:id", checkToken, essayController.create);
 
 /**
  * @swagger
@@ -133,6 +143,6 @@ router.put("/:id", checkToken, essayController.update);
  *       404:
  *         description: Redação não encontrada
  */
-router.delete("/:id", checkToken, essayController.create);
+router.delete("/:id", checkToken, essayController.remove);
 
 module.exports = router;

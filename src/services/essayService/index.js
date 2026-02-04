@@ -8,6 +8,7 @@ const EssayValidationContentError = require('../../exceptions/domain/essay/Essay
 const EssayValidationTitleError = require('../../exceptions/domain/essay/EssayValidationTitleError');
 const essayRepository = require('../../repositories/essayRepository');
 const categoryRepository = require('../../repositories/categoryRepository');
+const userRepository = require('../../repositories/userRepository');
 
 async function getAllEssay() {
     return essayRepository.findAll();
@@ -22,6 +23,7 @@ async function getEssayById(id) {
 async function createEssay(data, userId) {
     // Validar categoria
     const category = await categoryRepository.findById(data.category_id);
+    const user = await userRepository.findById(userId);
     if (!category) {
         throw new EssayCategoryNotFoundError();
     }
@@ -30,7 +32,7 @@ async function createEssay(data, userId) {
     const existing = await essayRepository.findByTitle(
         data.title,
         userId,
-        data.categoryId
+        data.category_id
     );
 
     if (existing) {
@@ -51,8 +53,8 @@ async function createEssay(data, userId) {
     return essayRepository.create({
         title: data.title.trim(),
         content: data.content.trim(),
-        category_id: data.categoryId,
-        userId: userId,
+        category_id: data.category_id,
+        user_id: userId,
         status: "PENDENTE",
         note: null
     });

@@ -6,7 +6,7 @@ function toEssayDto(essay) {
         note: essay.note,
         status: essay.status,
         userId: essay.user_id,
-        category: essay.category_id,
+        categoryId: essay.category_id,
     }
 }
 

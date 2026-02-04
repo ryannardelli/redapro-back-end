@@ -24,12 +24,25 @@ async function findById(req, res, next) {
 
 async function create(req, res, next) {
     try {
-        await essayService.createEssay(req.body);
+        const userId = Number(req.params.id);
+
+        await essayService.createEssay(req.body, userId);
+
         res.status(201).json({ message: "Redação criada com sucesso!" });
-    } catch(err) {
+    } catch (err) {
         next(err);
     }
 }
+
+
+// async function create(req, res, next) {
+//     try {
+//         await essayService.createEssay(req.body, req.user.id);
+//         res.status(201).json({ message: "Redação criada com sucesso!" });
+//     } catch(err) {
+//         next(err);
+//     }
+// }
 
 async function update(req, res, next) {
     try {
