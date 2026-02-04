@@ -127,7 +127,7 @@ async function deleteEssay(id) {
      return { message: "Redação excluída com sucesso!" };
 };
 
-async function startReview(essayId, reviewrId) {
+async function startReview(essayId, reviewerId) {
     const essay = await essayRepository.findById(essayId);
 
     if(!essay) throw new EssayNotFoundError();
@@ -137,11 +137,26 @@ async function startReview(essayId, reviewrId) {
     }
 
     essay.status = "EM_CORRECAO";
-    essay.reviewrId = reviewrId;
+    essay.reviewerId = reviewerId;
+    
+    await essay.save();
+
+    return essay;
+}
+
+async function finishReview(essayId, reviewerId, data) {
+    const essay = await essayRepository.findById(essayId);
+
+    if(!essay) throw new EssayNotFoundError();
+    if(essay.reviewerId !== reviewerId) throw new EssayForbiddenError();
+    if(essay.status !== "EM_CORRECAO") throw new EssayUpdateNotAllowedError();
+
+    essay.note = data.note,
+    essay.status = "CORRIGIDA"
 
     await essay.save();
 
     return essay;
 }
 
-module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser, startReview };
+module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser, startReview, finishReview };

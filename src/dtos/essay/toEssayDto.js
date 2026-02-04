@@ -7,6 +7,7 @@ function toEssayDto(essay) {
         status: essay.status ?? null,
         userId: essay.userId ?? null,
         categoryId: essay.categoryId ?? null,
+        reviewerId: essay.reviewerId ?? null,
         createdAt: essay.createdAt ?? null,
         updatedAt: essay.updatedAt ?? null
     }

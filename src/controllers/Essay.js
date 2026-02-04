@@ -98,4 +98,33 @@ async function startReview(req, res, next) {
     }
 }
 
-module.exports = { findAll, findById, update, remove, create, findEssayByUser, startReview };
+async function finishReview(req, res, next) {
+  try {
+    const essayId = Number(req.params.id);
+    const reviewerId = req.user.id;
+    const { note } = req.body;
+
+    const essay = await essayService.finishReview(
+      essayId,
+      reviewerId,
+      { note }
+    );
+
+    const io = req.app.get("io");
+
+    io.to(`user_${essay.userId}`).emit("essay:status", {
+      essayId: essay.id,
+      status: essay.status,
+      message: "Sua redação foi corrigida."
+    });
+
+    return res.status(200).json({
+      message: "Correção finalizada com sucesso."
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+
+module.exports = { findAll, findById, update, remove, create, findEssayByUser, startReview, finishReview };

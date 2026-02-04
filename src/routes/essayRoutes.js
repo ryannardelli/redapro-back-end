@@ -266,4 +266,63 @@ router.patch(
   essayController.startReview
 );
 
+/**
+ * @swagger
+ * /essay/{id}/finish-review:
+ *   patch:
+ *     summary: Finaliza a correção de uma redação
+ *     description: >
+ *       Finaliza a correção da redação, atribuindo a nota final
+ *       e alterando o status para CORRIGIDA.
+ *     tags: [Essay]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID da redação
+ *         schema:
+ *           type: integer
+ *           example: 12
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - note
+ *             properties:
+ *               note:
+ *                 type: integer
+ *                 example: 900
+ *                 description: Nota final da redação (0 a 1000)
+ *     responses:
+ *       200:
+ *         description: Correção finalizada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Correção finalizada com sucesso
+ *       400:
+ *         description: Redação não pode ser finalizada
+ *       403:
+ *         description: Usuário não tem permissão para corrigir
+ *       404:
+ *         description: Redação não encontrada
+ *       401:
+ *         description: Token inválido ou ausente
+ */
+router.patch(
+  "/:id/finish-review",
+  checkToken,
+  essayController.finishReview
+);
+
+
 module.exports = router;
