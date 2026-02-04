@@ -1,4 +1,5 @@
 const Essay = require("../models/Essay");
+const User = require("../models/User");
 
 module.exports = {
     findAll: () => Essay.findAll({ order: [["id", "ASC"]], include: ["category"], }),
@@ -11,6 +12,26 @@ module.exports = {
 
         return Essay.findOne({ where });
     },
+    
+    findByWithUsers: (id) => {
+    return User.findByPk(id, {
+        include: [{
+            model: Essay,
+            as: "essay",
+            include: ["category"]
+        }]
+    });
+},
+
+    // findByWithUsers: (id) => {
+    //     User.findByPk(id, {
+    //         include: [{
+    //             model: Essay,
+    //             as: "essay",
+    //             include: ["category"]
+    //         }]
+    //     });
+    // },
     create: (data) => Essay.create(data),
     update: (essay, data) => essay.update(data),
     delete: (essay) => essay.destroy(),

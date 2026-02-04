@@ -21,6 +21,14 @@ async function getEssayById(id) {
     return essay;
 }
 
+async function getEssayByUser(userId) {
+    const user = await essayRepository.findByWithUsers(userId);
+
+    if (!user) throw new UserNotFoundError();
+
+    return user.essay;
+}
+
 async function createEssay(data, userId) {
     // Validar categoria
     const category = await categoryRepository.findById(data.category_id);
@@ -118,4 +126,4 @@ async function deleteEssay(id) {
      return { message: "Redação excluída com sucesso!" };
 };
 
-module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay };
+module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser };

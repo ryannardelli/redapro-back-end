@@ -48,20 +48,6 @@ async function update(req, res, next) {
     }
 }
 
-// async function update(req, res, next) {
-//     try {
-//         const updateDto = {
-//             id: req.params.id,
-//             ...toUpdateDto(req.body)
-//         }
-
-//         await essayService.updateEssay(updateDto);
-//         res.status(200).json({ message: "Redação atualizada com sucesso!" });
-//     } catch(err) {
-//         next(err);
-//     }
-// }
-
 async function remove(req, res, next) {
     try {
         const { id } = req.params;
@@ -72,4 +58,16 @@ async function remove(req, res, next) {
         next(err);
     }
 }
-module.exports = { findAll, findById, update, remove, create };
+
+async function findEssayByUser(req, res, next) {
+    try {
+        const { id } = req.params;
+        const essay = await essayService.getEssayByUser(id);
+
+        return res.status(200).json(essay.map(toEssayDto));
+    } catch(err) {
+        next(err);
+    }
+}
+
+module.exports = { findAll, findById, update, remove, create, findEssayByUser };

@@ -35,6 +35,9 @@ const Category = sequelize.define("Category", {
             }
         }
     }
+}, {
+    tableName: "categories",
+    freezeTableName: true
 });
 
 module.exports = Category;

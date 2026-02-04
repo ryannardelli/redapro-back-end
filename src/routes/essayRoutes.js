@@ -145,4 +145,71 @@ router.put("/:id", checkToken, essayController.update);
  */
 router.delete("/:id", checkToken, essayController.remove);
 
+/**
+ * @swagger
+ * /essay/users/{userId}:
+ *   get:
+ *     summary: Retorna todas as redações de um usuário
+ *     description: Busca todas as redações associadas ao usuário informado. Acesso permitido apenas para usuários autenticados.
+ *     tags: [Essay]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do usuário
+ *     responses:
+ *       200:
+ *         description: Lista de redações do usuário
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 15
+ *                   title:
+ *                     type: string
+ *                     example: Acesso à água potável no Brasil
+ *                   content:
+ *                     type: string
+ *                     example: Texto completo da redação...
+ *                   status:
+ *                     type: string
+ *                     example: PENDING
+ *                   score:
+ *                     type: number
+ *                     example: 0
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                   category:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       name:
+ *                         type: string
+ *                         example: Sociedade
+ *       401:
+ *         description: Token não informado ou inválido
+ *       403:
+ *         description: Acesso não autorizado
+ *       404:
+ *         description: Usuário não encontrado ou sem redações
+ */
+
+router.get(
+  "/users/:id",
+  checkToken,
+  essayController.findEssayByUser
+);
+
 module.exports = router;
