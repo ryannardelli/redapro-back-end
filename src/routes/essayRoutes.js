@@ -8,10 +8,18 @@ const { checkToken } = require("../middleware/checkToken");
  * @swagger
  * /essay/findAll:
  *   get:
- *     summary: Lista todas as redações
+ *     summary: Lista redações (com filtro por status)
  *     tags: [Essay]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: PENDENTE
+ *         description: Filtra redações pelo status
  *     responses:
  *       200:
  *         description: Lista de redações

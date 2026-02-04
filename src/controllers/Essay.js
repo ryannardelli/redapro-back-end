@@ -4,8 +4,13 @@ const essayService = require('../services/essayService');
 
 async function findAll(req, res, next) {
     try {
-        const essay = await essayService.getAllEssay();
-        const essayDto = essay.map(toEssayDto);
+        const { status } = req.query;
+
+        const essays = await essayService.getAllEssay({
+            status
+        });
+
+        const essayDto = essays.map(toEssayDto);
         return res.status(200).json(essayDto);
     } catch(err) {
         next(err);

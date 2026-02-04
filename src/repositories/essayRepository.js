@@ -2,7 +2,24 @@ const Essay = require("../models/Essay");
 const User = require("../models/User");
 
 module.exports = {
-    findAll: () => Essay.findAll({ order: [["id", "ASC"]], include: ["category"], }),
+    findAll: (filters = {}) => {
+    const where = {};
+
+    if (filters.status) {
+        where.status = filters.status;
+    }
+
+    if (filters.userId) {
+        where.userId = filters.userId;
+    }
+
+    return Essay.findAll({
+        where,
+        order: [["id", "ASC"]],
+        include: ["category"]
+    });
+},
+
     findById: (id) => Essay.findByPk(id),
     findByTitle(title, userId, categoryId) {
         const where = { title };

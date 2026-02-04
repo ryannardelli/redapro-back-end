@@ -11,9 +11,10 @@ const essayRepository = require('../../repositories/essayRepository');
 const categoryRepository = require('../../repositories/categoryRepository');
 const userRepository = require('../../repositories/userRepository');
 
-async function getAllEssay() {
-    return essayRepository.findAll();
+async function getAllEssay(filters = {}) {
+    return essayRepository.findAll(filters);
 }
+
 
 async function getEssayById(id) {
     const essay = await essayRepository.findById(id);

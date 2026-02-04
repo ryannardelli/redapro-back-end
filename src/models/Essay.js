@@ -43,7 +43,7 @@ const Essay = sequelize.define("Essay", {
   },
 
   status: {
-    type: DataTypes.ENUM("PENDENTE", "CORRIGIDA", "INVALIDA"),
+    type: DataTypes.ENUM("PENDENTE", "CORRIGIDA", "EM_CORRECAO"),
     allowNull: false,
     defaultValue: "PENDENTE"
   },
