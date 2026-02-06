@@ -1,4 +1,4 @@
-const client = require("../config/githubModels");
+const client = require("../../config/githubModels");
 const { isUnexpected } = require("@azure-rest/ai-inference");
 
 /**
@@ -9,7 +9,7 @@ const { isUnexpected } = require("@azure-rest/ai-inference");
 async function generateWithOpenAI(prompt) {
   const response = await client.path("/chat/completions").post({
     body: {
-      model: "openai/gpt-5",
+      model: "openai/gpt-4o-mini",
       messages: [
         {
           role: "system",

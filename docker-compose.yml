@@ -32,12 +32,13 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: 5432
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
     depends_on:
       db:
         condition: service_healthy
     volumes:
        - .:/src
+       - /src/node_modules
 
 volumes:
   postgres_data:

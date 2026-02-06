@@ -12,7 +12,7 @@ const categoryRepository = require('../../repositories/categoryRepository');
 const userRepository = require('../../repositories/userRepository');
 const InvalidCompetenceError = require('../../exceptions/domain/essay/InvalidCompetenceError');
 const AISubmissionLimitError = require('../../exceptions/domain/essay/AISubmissionLimitError');
-const generateWithOpenAI = require('../openAIService');
+const { generateWithOpenAI } = require('../openAIService');
 
 async function getAllEssay(filters = {}) {
     return essayRepository.findAll(filters);
@@ -262,6 +262,5 @@ Retorne um JSON exatamente neste formato:
 
   return essay;
 }
-
 
 module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser, startReview, finishReview, correctEssayWithAI };

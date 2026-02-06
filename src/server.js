@@ -1,3 +1,11 @@
+const crypto = require("crypto");
+
+if (!global.crypto) {
+  global.crypto = crypto.webcrypto;
+}
+
+global.crypto.randomUUID ??= crypto.randomUUID;
+
 require("dotenv").config();
 
 const app = require("./app");
