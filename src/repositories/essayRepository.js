@@ -1,5 +1,6 @@
 const Essay = require("../models/Essay");
 const User = require("../models/User");
+const { Op } = require("sequelize");
 
 module.exports = {
     findAll: (filters = {}) => {
@@ -42,5 +43,15 @@ module.exports = {
     create: (data) => Essay.create(data),
     update: (essay, data) => essay.update(data),
     delete: (essay) => essay.destroy(),
-    save: (essay) => essay.save()
+    save: (essay) => essay.save(),
+    count: (filters = {}) => {
+    const where = {};
+
+    if (filters.userId) where.userId = filters.userId;
+    if (filters.reviewerId !== undefined) where.reviewerId = filters.reviewerId;
+    if (filters.status) where.status = filters.status;
+    if (filters.updatedAt) where.updatedAt = { [Op.gte]: filters.updatedAt };
+
+    return Essay.count({ where });
+  }
 }

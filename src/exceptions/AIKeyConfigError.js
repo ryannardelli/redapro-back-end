@@ -1,4 +1,4 @@
-class OpenAIConfigError extends Error {
+class AIKeyConfigError extends Error {
     constructor(message = "Chave da OpenAI não definida no .env") {
         super(message);
         this.name = "OpenAIConfigError";
@@ -6,4 +6,4 @@ class OpenAIConfigError extends Error {
     }
 }
 
-module.exports = OpenAIConfigError;
+module.exports = AIKeyConfigError;

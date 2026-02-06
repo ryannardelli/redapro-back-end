@@ -351,4 +351,51 @@ router.patch(
   essayController.finishReview
 );
 
+/**
+ * @swagger
+ * /essay/{id}/correct-ai:
+ *   patch:
+ *     summary: Corrige uma redação utilizando IA
+ *     description: >
+ *       Corrige a redação automaticamente utilizando a API da OpenAI.
+ *       Cada usuário pode corrigir no máximo 2 redações por semana.
+ *       Também notifica o aluno via Socket.IO.
+ *     tags: [Essay]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID da redação
+ *         schema:
+ *           type: integer
+ *           example: 12
+ *     responses:
+ *       200:
+ *         description: Redação corrigida com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Redação corrigida com IA com sucesso.
+ *                 essay:
+ *                   $ref: '#/components/schemas/Essay'
+ *       403:
+ *         description: Limite de correções de IA atingido
+ *       404:
+ *         description: Redação não encontrada
+ *       401:
+ *         description: Token inválido ou ausente
+ */
+router.patch(
+    "/:id/correct-ai",
+    checkToken,
+    essayController.correctWithAI
+);
+
+
 module.exports = router;

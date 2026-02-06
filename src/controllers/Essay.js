@@ -126,4 +126,26 @@ async function finishReview(req, res, next) {
     }
 }
 
-module.exports = { findAll, findById, update, remove, create, findEssayByUser, startReview, finishReview };
+async function correctWithAI(req, res, next) {
+    try {
+        const essayId = Number(req.params.id);
+        const userId = req.user.id;
+
+        const essay = await essayService.correctEssayWithAI(userId, essayId);
+
+        const io = req.app.get("io");
+
+        io.to(`user_${essay.userId}`).emit("essay:status", {
+            message: "Sua redação foi corrigida pela IA."
+        });
+
+        return res.status(200).json({
+            message: "Redação corrigida com IA com sucesso.",
+            essay: toEssayDto(essay)
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
+module.exports = { findAll, findById, update, remove, create, findEssayByUser, startReview, finishReview, correctWithAI };
