@@ -12,8 +12,7 @@ const categoryRepository = require('../../repositories/categoryRepository');
 const userRepository = require('../../repositories/userRepository');
 const InvalidCompetenceError = require('../../exceptions/domain/essay/InvalidCompetenceError');
 const AISubmissionLimitError = require('../../exceptions/domain/essay/AISubmissionLimitError');
-// const openai = require('../../config/openai');
-const { generateWithGemini } = require("../../config/gemini");
+const generateWithOpenAI = require('../openAIService');
 
 async function getAllEssay(filters = {}) {
     return essayRepository.findAll(filters);
@@ -180,36 +179,42 @@ async function finishReview(essayId, reviewerId, data) {
 }
 
 async function correctEssayWithAI(userId, essayId) {
-    const essay = await essayRepository.findById(essayId);
-    if (!essay) throw new EssayNotFoundError();
+  const essay = await essayRepository.findById(essayId);
+  if (!essay) throw new EssayNotFoundError();
 
-    if (essay.status !== "PENDENTE") throw new EssayUpdateNotAllowedError();
+  if (essay.status !== "PENDENTE") {
+    throw new EssayUpdateNotAllowedError();
+  }
 
-    // Limite semanal
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  // Limite semanal
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-    const aiCorrectionsLastWeek = await essayRepository.count({
-        reviewerId: null,
-        userId,
-        status: "CORRIGIDA",
-        updatedAt: oneWeekAgo
-    });
+  const aiCorrectionsLastWeek = await essayRepository.count({
+    reviewerId: null,
+    userId,
+    status: "CORRIGIDA",
+    updatedAt: oneWeekAgo
+  });
 
-    if (aiCorrectionsLastWeek >= 2) {
-        throw new AISubmissionLimitError();
-    }
+  if (aiCorrectionsLastWeek >= 2) {
+    throw new AISubmissionLimitError();
+  }
 
-    essay.status = "EM_CORRECAO";
-    await essay.save();
+  essay.status = "EM_CORRECAO";
+  await essay.save();
 
-    const prompt = `
+  const prompt = `
 Avalie a seguinte redação do usuário:
+
 Título: ${essay.title}
-Conteúdo: ${essay.content}
+
+Conteúdo:
+${essay.content}
 
 Avalie em 5 competências (C1 a C5), cada uma de 0 a 200 pontos.
 Forneça também um feedback geral resumido (2-3 frases).
+
 Retorne um JSON exatamente neste formato:
 {
   "c1": number,
@@ -219,43 +224,44 @@ Retorne um JSON exatamente neste formato:
   "c5": number,
   "generalFeedback": string
 }
-    `;
+`;
 
-    const responseText = await generateWithGemini(prompt);
+  const responseText = await generateWithOpenAI(prompt);
 
-    let aiResult;
-    try {
-        aiResult = JSON.parse(responseText);
-    } catch (e) {
-        throw new Error("Resposta da IA inválida ou não está em JSON.");
+  let aiResult;
+  try {
+    aiResult = JSON.parse(responseText);
+  } catch {
+    throw new Error("Resposta da IA inválida ou não está em JSON.");
+  }
+
+  const competencies = ["c1", "c2", "c3", "c4", "c5"];
+  for (const c of competencies) {
+    if (
+      typeof aiResult[c] !== "number" ||
+      aiResult[c] < 0 ||
+      aiResult[c] > 200
+    ) {
+      throw new InvalidCompetenceError(`Nota da competência ${c} inválida.`);
     }
+  }
 
-    const competencies = ["c1", "c2", "c3", "c4", "c5"];
-    for (let c of competencies) {
-        if (
-            aiResult[c] === undefined ||
-            typeof aiResult[c] !== "number" ||
-            aiResult[c] < 0 || aiResult[c] > 200
-        ) {
-            throw new InvalidCompetenceError(`Nota da competência ${c} inválida.`);
-        }
-    }
+  essay.c1 = aiResult.c1;
+  essay.c2 = aiResult.c2;
+  essay.c3 = aiResult.c3;
+  essay.c4 = aiResult.c4;
+  essay.c5 = aiResult.c5;
 
-    essay.c1 = aiResult.c1;
-    essay.c2 = aiResult.c2;
-    essay.c3 = aiResult.c3;
-    essay.c4 = aiResult.c4;
-    essay.c5 = aiResult.c5;
-    essay.note = [essay.c1, essay.c2, essay.c3, essay.c4, essay.c5].reduce(
-        (acc, val) => acc + val,
-        0
-    );
-    essay.generalFeedback = aiResult.generalFeedback;
-    essay.status = "CORRIGIDA";
+  essay.note =
+    essay.c1 + essay.c2 + essay.c3 + essay.c4 + essay.c5;
 
-    await essay.save();
+  essay.generalFeedback = aiResult.generalFeedback;
+  essay.status = "CORRIGIDA";
 
-    return essay;
+  await essay.save();
+
+  return essay;
 }
+
 
 module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser, startReview, finishReview, correctEssayWithAI };

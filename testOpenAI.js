@@ -1,41 +1,41 @@
 require("dotenv").config();
-const { OpenAI } = require("openai");
+
+const client = require("./src/config/githubModels");
+const { isUnexpected } = require("@azure-rest/ai-inference");
 
 (async () => {
   try {
-    // Cria o client da OpenAI com a chave da API
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+    console.log("Conectando ao GitHub Models...");
+
+    const response = await client.path("/chat/completions").post({
+      body: {
+        model: "openai/gpt-4o-mini",
+        messages: [
+          { role: "system", content: "Você é um assistente que responde apenas com OK" },
+          { role: "user", content: "Responda apenas com OK" }
+        ],
+        max_tokens: 50
+      }
     });
 
-    console.log("Conectando...");
+    if (isUnexpected(response)) {
+      throw response.body.error;
+    }
 
-    // Faz a requisição para gerar texto
-    const result = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: "Você é um assistente que responde apenas com OK" },
-        { role: "user", content: "Responda apenas com OK" }
-      ],
-      max_tokens: 50
-    });
-
-    // Extrai o texto da resposta
-    const text = result.choices[0].message.content;
+    const text = response.body.choices[0].message.content;
     console.log("Resultado:", text);
 
   } catch (error) {
     console.error("\n--- Diagnóstico do Erro ---");
-    
-    // Alguns erros da OpenAI podem ter status, outros não
-    console.error("Status:", error.response?.status || "N/A");
     console.error("Mensagem:", error.message);
 
-    if (error.response?.status === 429) {
-      console.log("\n💡 O problema agora é COTA (Limite de Requisições).");
-      console.log("1. Espere alguns segundos e tente de novo.");
-      console.log("2. Verifique se você não está rodando o script várias vezes.");
-      console.log("3. Se persistir, verifique seu saldo ou limite da API.");
+    if (error.statusCode === 429) {
+      console.log("\n💡 Limite gratuito do GitHub Models atingido.");
+      console.log("Espere ou habilite billing.");
+    }
+
+    if (error.statusCode === 401) {
+      console.log("\n💡 Token inválido ou sem permissão models:read.");
     }
   }
 })();
