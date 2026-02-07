@@ -26,6 +26,7 @@ async function connectDB() {
         const ProfileMenu = require("./models/ProfileMenu");
         const Essay = require("./models/Essay");
         const Category = require("./models/Category");
+        const ReferenceEssay = require("./models/ReferenceEssay");
 
         // Definir relacionamento antes de sincronizar
         Profile.hasMany(User, { foreignKey: 'profileId' });
@@ -36,6 +37,9 @@ async function connectDB() {
 
         Category.hasMany(Essay, { foreignKey: "categoryId", as: "essay" });
         Essay.belongsTo(Category, { foreignKey: "categoryId", as: "category" })
+
+        Category.hasMany(ReferenceEssay, { foreignKey: "categoryId", as: "essay" });
+        ReferenceEssay.belongsTo(Category, { foreignKey: "categoryId", as: "category" })
 
         Profile.belongsToMany(Menu, {
             through: ProfileMenu,
