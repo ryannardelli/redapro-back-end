@@ -38,7 +38,7 @@ async function connectDB() {
         Category.hasMany(Essay, { foreignKey: "categoryId", as: "essay" });
         Essay.belongsTo(Category, { foreignKey: "categoryId", as: "category" })
 
-        Category.hasMany(ReferenceEssay, { foreignKey: "categoryId", as: "essay" });
+        Category.hasMany(ReferenceEssay, { foreignKey: "categoryId", as: "referenceEssay" });
         ReferenceEssay.belongsTo(Category, { foreignKey: "categoryId", as: "category" })
 
         Profile.belongsToMany(Menu, {

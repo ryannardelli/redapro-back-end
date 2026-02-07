@@ -36,7 +36,6 @@ async function create(req, res, next) {
 
         return res.status(201).json({ 
             message: "Redação cadastrada com sucesso!",
-            data: toReferenceEssayDto(essay)
         });
     } catch (err) {
         next(err);

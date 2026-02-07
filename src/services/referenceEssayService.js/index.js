@@ -18,7 +18,7 @@ async function getReferenceEssayById(id) {
 }
 
 async function createReferenceEssay(data) {
-    const category = await categoryRepository.findById(data.categoryId);
+    const category = await categoryRepository.findById(data.category_id);
     if (!category) throw new CategoryNotFoundError();
 
     // Validar se já existe redação com mesmo título e ano (evitar duplicidade do INEP)
@@ -46,7 +46,7 @@ async function createReferenceEssay(data) {
         content: data.content.trim(),
         year: data.year,
         pdf_url: data.pdf_url || null,
-        categoryId: data.categoryId
+        categoryId: data.category_id
     });
 }
 
@@ -78,14 +78,14 @@ async function updateReferenceEssay(id, updateDto) {
         updateData.content = content;
     }
 
-    if (updateDto.categoryId !== undefined) {
-        const category = await categoryRepository.findById(updateDto.categoryId);
+    if (updateDto.category_id !== undefined) {
+        const category = await categoryRepository.findById(updateDto.category_id);
 
         if (!category) {
             throw new CategoryNotFoundError();
         }
 
-        updateData.categoryId = updateDto.categoryId;
+        updateData.categoryId = updateDto.category_id;
     }
 
     if (updateDto.year !== undefined) {
