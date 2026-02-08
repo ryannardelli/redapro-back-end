@@ -2,8 +2,8 @@ const authService = require("../services/authService");
 
 async function create(req, res, next) {
   try {
-    await authService.createUser(req.body);
-    res.status(201).json({ message: "Usuário criado com sucesso!" });
+    const result = await authService.createUser(req.body);
+    res.status(201).json(result);
   } catch (error) {
     next(error);
   }

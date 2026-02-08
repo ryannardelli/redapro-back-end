@@ -27,7 +27,31 @@ async function createUser({ name, email, password }) {
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  return await userRepository.create({ name, email, password: hashedPassword, role });
+  const user =  await userRepository.create({ name, email, password: hashedPassword, role });
+
+  const secret = process.env.SECRET;
+
+  const token = jwt.sign(
+    {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    },
+    secret,
+    { expiresIn: "1h" }
+  );
+
+   return {
+    message: "Cadastro feito com sucesso!",
+    token,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+  };
+
 }
 
 async function login({ email, password }) {
@@ -45,7 +69,7 @@ async function login({ email, password }) {
 
       return { token };
    } catch(err) {
-
+      console.log(err);
    }
 }
 
