@@ -55,22 +55,36 @@ async function createUser({ name, email, password }) {
 }
 
 async function login({ email, password }) {
-   if (!/\S+@\S+\.\S+/.test(email)) throw new InvalidEmailError();
-   
-   const user = await userRepository.findByEmail(email);
-   if(!user) throw new UserNotFoundError();
+  if (!/\S+@\S+\.\S+/.test(email)) throw new InvalidEmailError();
 
-   const passwordMatch = await bcrypt.compare(password, user.password);
-   if(!passwordMatch) throw new InvalidCredentialsError();
-   
-   try {
-      const secret = process.env.SECRET;
-      const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, secret, { expiresIn: '1h' });
+  const user = await userRepository.findByEmail(email);
+  if (!user) throw new UserNotFoundError();
 
-      return { token };
-   } catch(err) {
-      console.log(err);
-   }
+  const passwordMatch = await bcrypt.compare(password, user.password);
+  if (!passwordMatch) throw new InvalidCredentialsError();
+
+  try {
+    const secret = process.env.SECRET;
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role }, 
+      secret, 
+      { expiresIn: '1h' }
+    );
+
+    return {
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    };
+  } catch (err) {
+    console.error(err);
+    throw new Error("Erro ao gerar token");
+  }
 }
+
 
 module.exports = { createUser, login };
