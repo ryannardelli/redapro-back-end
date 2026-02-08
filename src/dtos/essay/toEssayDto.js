@@ -1,21 +1,32 @@
 function toEssayDto(essay) {
+    const hasFeedback = essay.generalFeedback !== null || essay.c1 !== null;
+
     return {
         id: essay.id,
         title: essay.title,
         content: essay.content,
         note: essay.note ?? null,
         status: essay.status ?? null,
-        userId: essay.userId ?? null,
-        c1: essay.c1 ?? null,
-        c2: essay.c2 ?? null,
-        c3: essay.c3 ?? null,
-        c4: essay.c4 ?? null,
-        c5: essay.c5 ?? null,
-        generalFeedback: essay.generalFeedback ?? null,
-        categoryId: essay.categoryId ?? null,
-        reviewerId: essay.reviewerId ?? null,
         createdAt: essay.createdAt ?? null,
-        updatedAt: essay.updatedAt ?? null
+        updatedAt: essay.updatedAt ?? null,
+
+        category: essay.category ? {
+            id: essay.category.id,
+            name: essay.category.name,
+            description: essay.category.description
+        } : null,
+
+        feedback: hasFeedback ? {
+            c1: essay.c1,
+            c2: essay.c2,
+            c3: essay.c3,
+            c4: essay.c4,
+            c5: essay.c5,
+            general: essay.generalFeedback
+        } : null,
+
+        userId: essay.userId ?? null,
+        reviewerId: essay.reviewerId ?? null,
     }
 }
 
