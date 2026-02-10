@@ -3,6 +3,18 @@ const { toUserDto } = require("../dtos/users/toUserDto");
 const { toUpdateDto } = require("../dtos/users/toUpdateDto");
 const { toRoleUpdateDto } = require("../dtos/users/toRoleUpdateDto");
 
+async function me(req, res, next) {
+  try {
+    const userId = req.user.id;
+
+    const user = await userService.getUserById(userId);
+
+    return res.status(200).json(toUserDto(user));
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function findAll(req, res, next) {
     try {
         const users = await userService.getAllUsers();
@@ -74,4 +86,4 @@ async function updateRole(req, res, next) {
   }
 }
 
-module.exports = { findAll, findById, update, remove, updateRole, updateUserProfile};
+module.exports = { findAll, findById, update, remove, updateRole, updateUserProfile, me};

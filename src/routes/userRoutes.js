@@ -315,6 +315,19 @@ const authorize = require("../middleware/authorize");
  *                   example: "Acesso não autorizado."
  */
 
+/**
+ * @swagger
+ * /users/me:
+ *   get:
+ *     summary: Retorna o usuário autenticado
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Usuário autenticado
+ */
+router.get("/me", checkToken, userController.me);
 router.get("/findAll", checkToken, userController.findAll);
 router.patch("/updateRole", checkToken, authorize(["admin"]), userController.updateRole);
 router.patch("/associateProfile/:id", checkToken, authorize(["admin"]), userController.updateUserProfile);
