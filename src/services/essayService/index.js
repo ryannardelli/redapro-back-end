@@ -118,7 +118,7 @@ async function updateEssay(essayId, updateDto, userId) {
         updateData.category_id = updateDto.category_id;
     }
 
-    await essayRepository.updateById(essayId, updateData);
+    await essayRepository.update(essay, updateData);
 }
 
 async function deleteEssay(id) {
