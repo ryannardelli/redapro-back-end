@@ -28,7 +28,19 @@ const Profile = sequelize.define("Profile", {
                 msg: "A descrição do perfil deve ter no máximo 255 caracteres."
             }
         }
-    }
+    },
+
+    active: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
+  },
+
+  system: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  }
 }, {
     tableName: "profile",
     freezeTableName: true

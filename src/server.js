@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const seedProfiles = require("./seeds/profile.seed");
 
 if (!global.crypto) {
   global.crypto = crypto.webcrypto;
@@ -53,6 +54,9 @@ async function connectDB() {
 
         // Sincronizar todas as tabelas
         await sequelize.sync({ alter: true });
+
+        // Executar seeds do sistema
+        await seedProfiles();
 
         console.log("Tabelas sincronizadas com sucesso!");
     } catch(e) {

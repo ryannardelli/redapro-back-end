@@ -26,13 +26,19 @@ async function getMenusByProfile(profileId) {
 }
 
 async function createProfile(data) {
+    const SYSTEM_PROFILES = ["Administrador", "Corretor", "Estudante"];
+
+    if(SYSTEM_PROFILES.includes(data.name.toUpperCase())) {
+        throw new ProfileAlreadyExistsError(data.name);
+    }
+
     const existing = await profileRepository.findByName(data.name);
     if(existing) throw new ProfileAlreadyExistsError(data.name);
 
     if(data.length > 50) throw new ProfileNameValidationError();
     if(data.description && data.description.length > 255) throw new ProfileDescriptionValidationError();
 
-    return profileRepository.create(data);
+    return profileRepository.create({ ...data, system: false, active: true });
 }
 
 async function updateProfile(updateDto) {
@@ -41,7 +47,7 @@ async function updateProfile(updateDto) {
 
 
     if(!profile) throw new ProfileNotFoundError();
-    if(profile.name === 'ADMIN') throw new ProfileAdminProtectedUpdateError();
+    if(profile.system) throw new ProfileAdminProtectedUpdateError();
 
     const existing = await profileRepository.findByName(updateData.name);
     if(existing) throw new ProfileAlreadyExistsError(updateData.name);
@@ -70,8 +76,10 @@ async function deleteProfile(id) {
     const profile = await getProfileById(id);
 
      if(!profile) throw new ProfileNotFoundError();
-     if(profile.name === 'ADMIN') throw new ProfileAdminProtectedDeleteError();
-
+     
+      if (profile.system) {
+        throw new ProfileAdminProtectedDeleteError();
+      }
 
      await profile.destroy();
      return { message: "Perfil excluído com sucesso!" };
