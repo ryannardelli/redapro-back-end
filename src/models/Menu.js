@@ -8,6 +8,13 @@ const Menu = sequelize.define("Menu", {
         autoIncrement: true,
     },
 
+    key: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+
+
     name: {
         type: DataTypes.STRING(50),
         allowNull: false,
@@ -17,8 +24,8 @@ const Menu = sequelize.define("Menu", {
             },
 
             len: {
-                args: [3, 50],
-                msg: "O nome do menu deve ter entre 3 e 50 caracteres."
+                args: [1, 50],
+                msg: "O nome do menu deve ter entre 1 e 50 caracteres."
             }
         }
     },
@@ -32,8 +39,8 @@ const Menu = sequelize.define("Menu", {
             },
 
             len: {
-                args: [3, 100],
-                msg: "A rota deve ter entre 3 e 100 caracteres."
+                args: [1, 100],
+                msg: "A rota deve ter entre 1 e 100 caracteres."
             },
 
             is: {

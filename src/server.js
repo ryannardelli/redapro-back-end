@@ -1,5 +1,7 @@
 const crypto = require("crypto");
 const seedProfiles = require("./seeds/profile.seed");
+const seedProfileMenus = require("./seeds/seedProfileMenus");
+const seedMenus = require("./seeds/seedMenus");
 
 if (!global.crypto) {
   global.crypto = crypto.webcrypto;
@@ -57,6 +59,8 @@ async function connectDB() {
 
         // Executar seeds do sistema
         await seedProfiles();
+        await seedMenus();
+        await seedProfileMenus();
 
         console.log("Tabelas sincronizadas com sucesso!");
     } catch(e) {
