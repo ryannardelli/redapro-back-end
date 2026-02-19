@@ -1,4 +1,3 @@
-const User = require("../../models/User");
 const EmailAlreadyExistsError = require("../../exceptions/domain/auth/EmailAlreadyExistsError");
 const InvalidEmailError = require("../../exceptions/domain/auth/InvalidEmailError");
 const InvalidPasswordError = require("../../exceptions/domain/auth/InvalidPasswordError ");
@@ -11,6 +10,7 @@ const UserNotFoundError = require("../../exceptions/domain/auth/UserNotFoundErro
 const jwt = require('jsonwebtoken');
 
 const userRepository = require("../../repositories/userRepository");
+const profileRepository = require("../../repositories/profileRepository");
 
 async function createUser({ name, email, password }) {
   if (name.length < 2 || name.length > 100) throw new InvalidNameError();
@@ -22,12 +22,18 @@ async function createUser({ name, email, password }) {
 
   const userCount = await userRepository.countUsers();
 
+   const profileName = userCount === 0
+    ? "Administrador"
+    : "Estudante";
+
+  const profile = await profileRepository.findByName(profileName);
+
   const role = userCount === 0 ? "admin" : "student";
 
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  const user =  await userRepository.create({ name, email, password: hashedPassword, role });
+  const user =  await userRepository.create({ name, email, password: hashedPassword, role, profileId: profile.id });
 
   const secret = process.env.SECRET;
 
