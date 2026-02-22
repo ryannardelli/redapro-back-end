@@ -83,11 +83,7 @@ async function login({ email, password }) {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role,
-        profile: {
-          id: profile.id,
-          name: profile.name
-        }
+        role: user.role
       },
     };
   } catch (err) {
