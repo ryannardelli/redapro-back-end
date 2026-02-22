@@ -1,5 +1,4 @@
 const menuRepository = require("../../repositories/menuRepository");
-const profileRepository = require("../../repositories/profileRepository");
 
 const MenuNotFoundError = require("../../exceptions/domain/menu/MenuNotFoundError");
 const RouteAlreadyExistsError = require("../../exceptions/domain/menu/RouteAlreadyExistsError");

@@ -7,13 +7,24 @@ async function seedProfileMenus() {
   const corretor = await Profile.findOne({ where: { name: "Corretor" } });
   const estudante = await Profile.findOne({ where: { name: "Estudante" } });
 
-  // ADMIN → tudo
-  const allMenus = await Menu.findAll();
-  for (const menu of allMenus) {
-    await ProfileMenu.findOrCreate({
-      where: { profileId: admin.id, menuId: menu.id },
-      defaults: { enabled: true },
-    });
+  // MENUS ADMIN
+  const adminMenuKeys = [
+    "admin-home",
+    "admin-menus",
+    "admin-profiles",
+    "admin-users",
+    "admin-categories",
+    "admin-reference-essay",
+  ];
+
+  for (const key of adminMenuKeys) {
+    const menu = await Menu.findOne({ where: { key } });
+    if (menu) {
+      await ProfileMenu.findOrCreate({
+        where: { profileId: admin.id, menuId: menu.id },
+        defaults: { enabled: true },
+      });
+    }
   }
 
   // CORRETOR
@@ -27,10 +38,12 @@ async function seedProfileMenus() {
 
   for (const key of corretorMenuKeys) {
     const menu = await Menu.findOne({ where: { key } });
-    await ProfileMenu.findOrCreate({
-      where: { profileId: corretor.id, menuId: menu.id },
-      defaults: { enabled: true },
-    });
+    if (menu) {
+      await ProfileMenu.findOrCreate({
+        where: { profileId: corretor.id, menuId: menu.id },
+        defaults: { enabled: true },
+      });
+    }
   }
 
   // ESTUDANTE
@@ -46,10 +59,12 @@ async function seedProfileMenus() {
 
   for (const key of estudanteMenuKeys) {
     const menu = await Menu.findOne({ where: { key } });
-    await ProfileMenu.findOrCreate({
-      where: { profileId: estudante.id, menuId: menu.id },
-      defaults: { enabled: true },
-    });
+    if (menu) {
+      await ProfileMenu.findOrCreate({
+        where: { profileId: estudante.id, menuId: menu.id },
+        defaults: { enabled: true },
+      });
+    }
   }
 }
 
