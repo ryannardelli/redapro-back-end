@@ -75,28 +75,32 @@ router.get("/:id", checkToken, referenceEssayController.findById);
 
 /**
  * @swagger
- * /reference-essay:
- *   post:
- *     summary: Cadastra uma nova redação Nota 1000
- *     tags:
- *       - ReferenceEssay
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/CreateReferenceEssay'
- *     responses:
- *       201:
- *         description: Redação cadastrada com sucesso
- *       401:
- *         description: Não autenticado
- *       403:
- *         description: Acesso negado (apenas Admin)
- *       409:
- *         description: Redação com mesmo título/ano já existe
+ * components:
+ *   schemas:
+ *     CreateReferenceEssay:
+ *       type: object
+ *       required:
+ *         - title
+ *         - content
+ *         - year
+ *         - category_id
+ *       properties:
+ *         title:
+ *           type: string
+ *           example: "O impacto das redes sociais na democracia"
+ *         content:
+ *           type: string
+ *           example: "Texto completo da redação nota 1000..."
+ *         year:
+ *           type: integer
+ *           example: 2023
+ *         pdf_url:
+ *           type: string
+ *           nullable: true
+ *           example: "https://meusite.com/redacao.pdf"
+ *         category_id:
+ *           type: integer
+ *           example: 5
  */
 router.post("/", checkToken, authorize(["admin"]), referenceEssayController.create);
 
