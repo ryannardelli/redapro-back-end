@@ -197,7 +197,7 @@ async function correctEssayWithAI(userId, essayId) {
     updatedAt: oneWeekAgo
   });
 
-  if (aiCorrectionsLastWeek >= 2) {
+  if (aiCorrectionsLastWeek >= 10) {
     throw new AISubmissionLimitError();
   }
 

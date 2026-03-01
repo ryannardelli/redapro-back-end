@@ -1,5 +1,5 @@
 class AISubmissionLimitError extends Error {
-    constructor(message = "Você atingiu o limite de duas correções de IA por semana.") {
+    constructor(message = "Você atingiu a sua cota semanal de correções com IA.") {
         super(message);
         this.name = "AISubmissionLimitError";
         this.statusCode = 403;
