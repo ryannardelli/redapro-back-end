@@ -1,12 +1,12 @@
 const MenuNotFoundError = require('../../exceptions/domain/menu/MenuNotFoundError');
-const ProfileAdminProtectedDeleteError = require('../../exceptions/domain/profile/ProfileAdminProtectedDeleteError');
-const ProfileAdminProtectedUpdateError = require('../../exceptions/domain/profile/ProfileAdminProtectedUpdateError');
 const ProfileAlreadyExistsError = require('../../exceptions/domain/profile/ProfileAlreadyExistsError');
 const ProfileDescriptionValidationError = require('../../exceptions/domain/profile/ProfileDescriptionValidationError');
 const ProfileNameValidationError = require('../../exceptions/domain/profile/ProfileNameValidationError');
 const ProfileNotFoundError = require('../../exceptions/domain/profile/ProfileNotFoundError');
 const menuRepository = require('../../repositories/menuRepository');
 const profileRepository = require('../../repositories/profileRepository');
+const ProfileSystemProtectedUpdateError = require('../../exceptions/domain/profile/ProfileSystemProtectedUpdateError');
+const ProfileSystemProtectedDeleteError = require('../../exceptions/domain/profile/ProfileSystemProtectedDeleteError');
 
 async function getAllProfile() {
     return profileRepository.findAll();
@@ -47,12 +47,17 @@ async function updateProfile(updateDto) {
 
 
     if(!profile) throw new ProfileNotFoundError();
-    if(profile.system) throw new ProfileAdminProtectedUpdateError();
+    if(profile.system) throw new ProfileSystemProtectedUpdateError();
 
-    const existing = await profileRepository.findByName(updateData.name);
-    if(existing) throw new ProfileAlreadyExistsError(updateData.name);
+    if (updateData.name && updateData.name !== profile.name) {
+        const existing = await profileRepository.findByName(updateData.name);
 
-    if(updateData.length > 50) throw new ProfileNameValidationError();
+        if (existing && Number(existing.id) !== Number(id)) {
+            throw new ProfileAlreadyExistsError(updateData.name);
+        }
+    }
+
+    if(updateData.name && updateData.name.length > 50) throw new ProfileNameValidationError();
     if(updateData.description && updateData.description.length > 255) throw new ProfileDescriptionValidationError();
 
     await profile.update(updateData);
@@ -78,7 +83,7 @@ async function deleteProfile(id) {
      if(!profile) throw new ProfileNotFoundError();
      
       if (profile.system) {
-        throw new ProfileAdminProtectedDeleteError();
+        throw new ProfileSystemProtectedDeleteError();
       }
 
      await profile.destroy();
