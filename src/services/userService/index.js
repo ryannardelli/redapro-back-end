@@ -1,5 +1,6 @@
 const UserNotFoundError = require("../../exceptions/domain/auth/UserNotFoundError");
 const ProfileNotFoundError = require("../../exceptions/domain/profile/ProfileNotFoundError");
+const AdminUserDeleteError = require("../../exceptions/domain/users/AdminUserDeleteError");
 const InvalidRoleUserError = require("../../exceptions/domain/users/InvalidRoleUserError");
 const profileRepository = require("../../repositories/profileRepository");
 
@@ -30,6 +31,10 @@ async function deleteUser(id) {
     const user = await userRepository.findById(id);
 
     if(!user) throw new UserNotFoundError();
+
+    if (user.Profile?.name === "Administrador") {
+        throw new AdminUserDeleteError();
+    }
 
     await user.destroy();
     return { message: "Usuário excluído com sucesso!" };
