@@ -8,6 +8,7 @@ const menuRoutes = require("./routes/menuRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const essayRoutes = require("./routes/essayRoutes");
 const referenceEssayRoute = require("./routes/referenceEssayRoute");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 const handleError = require("./middleware/handleError");
 
 const app = express();
@@ -27,6 +28,7 @@ app.use("/menu", menuRoutes);
 app.use("/category", categoryRoutes);
 app.use("/essay", essayRoutes);
 app.use("/reference-essay", referenceEssayRoute);
+app.use("/dashboard", dashboardRoutes);
 
 // Swagger
 const { swaggerUi, swaggerSpec } = require("./config/swagger");

@@ -1,6 +1,6 @@
 const Essay = require("../models/Essay");
 const User = require("../models/User");
-const { Op } = require("sequelize");
+const { Op, fn, col } = require("sequelize");
 
 module.exports = {
     findAll: (filters = {}) => {
@@ -40,6 +40,34 @@ module.exports = {
         }]
     });
 },
+
+    countByUser(userId) {
+    return Essay.count({
+      where: { userId }
+    });
+  },
+
+  averageScoreByUser(userId) {
+    return Essay.findOne({
+      attributes: [
+        [fn("AVG", col("note")), "avgScore"]
+      ],
+      where: {
+        userId,
+        status: "CORRIGIDA"
+      },
+      raw: true
+    });
+  },
+
+  lastEssayByUser(userId) {
+    return Essay.findOne({
+      where: { userId },
+      order: [["createdAt", "DESC"]],
+      attributes: ["createdAt"]
+    });
+  },
+  
     create: (data) => Essay.create(data),
     update: (essay, data) => essay.update(data),
     delete: (essay) => essay.destroy(),
