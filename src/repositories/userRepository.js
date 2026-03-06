@@ -7,7 +7,7 @@ module.exports = {
             {
                 model: Profile,
                 as: 'Profile',
-                attributes: ['id', 'name', 'description']
+                attributes: ['id', 'name', 'description', 'system', 'active']
             }
         ]
     }),
@@ -16,7 +16,7 @@ module.exports = {
             {
                 model: Profile,
                 as: 'Profile',
-                attributes: ['id', 'name', 'description']
+                attributes: ['id', 'name', 'description', 'system', 'active']
             }
         ]
     }),

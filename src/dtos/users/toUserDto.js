@@ -9,7 +9,9 @@ function toUserDto(user) {
         profile: user.Profile ? {
             id: user.Profile.id,
             name: user.Profile.name,
-            description: user.Profile.description
+            description: user.Profile.description,
+            system: user.Profile.system,
+            active: user.Profile.active
         } : null
     }
 }
