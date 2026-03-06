@@ -222,7 +222,7 @@ router.patch("/associateMenu/:id", checkToken, authorize(["admin"]), profileCont
 
 /**
  * @swagger
- * /profile/menus/{id}:
+ * /profile/menus/{profileId}:
  *   get:
  *     summary: Retorna todos os menus associados a um perfil
  *     description: Retorna a lista de menus vinculados a um perfil existente.
