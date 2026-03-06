@@ -2,11 +2,8 @@ const Menu = require("../models/Menu");
 
 async function seedMenus() {
   const menus = [
-    // ======================
     // MENUS COMUNS
-    // ======================
     { key: "home", name: "Início", route: "/", icon: "Home" },
-    { key: "my-profile", name: "Meu Perfil", route: "/my-profile", icon: "User" },
 
     // MENUS CORRETOR
     {
@@ -86,6 +83,7 @@ async function seedMenus() {
       icon: "BookOpen",
     },
 
+    { key: "my-profile", name: "Meu Perfil", route: "/my-profile", icon: "User" },
     { key: "support", name: "Ajuda e Suporte", route: "/support", icon: "HelpCircle" },
   ];
 
