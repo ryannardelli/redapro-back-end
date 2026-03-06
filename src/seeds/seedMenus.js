@@ -7,7 +7,6 @@ async function seedMenus() {
     // ======================
     { key: "home", name: "Início", route: "/", icon: "Home" },
     { key: "my-profile", name: "Meu Perfil", route: "/my-profile", icon: "User" },
-    { key: "support", name: "Ajuda e Suporte", route: "/support", icon: "HelpCircle" },
 
     // MENUS CORRETOR
     {
@@ -86,6 +85,8 @@ async function seedMenus() {
       route: "/admin/setup/reference-essay",
       icon: "BookOpen",
     },
+
+    { key: "support", name: "Ajuda e Suporte", route: "/support", icon: "HelpCircle" },
   ];
 
   for (const menu of menus) {
