@@ -9,9 +9,7 @@ async function seedMenus() {
     { key: "my-profile", name: "Meu Perfil", route: "/my-profile", icon: "User" },
     { key: "support", name: "Ajuda e Suporte", route: "/support", icon: "HelpCircle" },
 
-    // ======================
     // MENUS CORRETOR
-    // ======================
     {
       key: "essays-corrector",
       name: "Correções de Redação",
@@ -25,9 +23,7 @@ async function seedMenus() {
       icon: "Calendar",
     },
 
-    // ======================
     // MENUS ESTUDANTE
-    // ======================
     {
       key: "my-essays",
       name: "Minhas Redações",
@@ -53,9 +49,7 @@ async function seedMenus() {
       icon: "Calendar",
     },
 
-    // ======================
     // MENUS ADMIN
-    // ======================
     {
       key: "admin-home",
       name: "Home",
@@ -66,7 +60,7 @@ async function seedMenus() {
       key: "admin-menus",
       name: "Menus",
       route: "/admin/setup/menus",
-      icon: "MenuIcon",
+      icon: "Layers",
     },
     {
       key: "admin-profiles",
