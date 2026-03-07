@@ -67,6 +67,16 @@ module.exports = {
       attributes: ["createdAt"]
     });
   },
+
+  findRecentByUser(userId, limit = 5) {
+    return Essay.findAll({
+      where: { userId },
+      order: [["createdAt", "DESC"]],
+      limit,
+      include: ["category"]
+    });
+  },
+
   
     create: (data) => Essay.create(data),
     update: (essay, data) => essay.update(data),

@@ -18,4 +18,8 @@ async function getStudentStats(userId) {
     };
 }
 
-module.exports = { getStudentStats };
+async function getRecentEssays(userId, limit = 5) {
+  return await essayRepository.findRecentByUser(userId, limit);
+}
+
+module.exports = { getStudentStats, getRecentEssays };
