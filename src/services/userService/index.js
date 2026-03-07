@@ -47,6 +47,18 @@ async function updateUserProfile(userId, profileId) {
     if(!profile) throw new ProfileNotFoundError();
 
     user.profileId = profile.id;
+
+    switch(profile.name) {
+        case 'Administrador':
+            user.role = 'admin';
+            break;
+        case 'Corretor':
+            user.role = 'corrector';
+            break;
+        default:
+            user.role = 'student';
+    }
+
     await userRepository.save(user);
 
     return user;
