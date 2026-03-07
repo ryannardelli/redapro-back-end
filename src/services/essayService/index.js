@@ -13,6 +13,8 @@ const userRepository = require('../../repositories/userRepository');
 const InvalidCompetenceError = require('../../exceptions/domain/essay/InvalidCompetenceError');
 const AISubmissionLimitError = require('../../exceptions/domain/essay/AISubmissionLimitError');
 const { generateWithOpenAI } = require('../openAIService');
+const EssayAiCorrectionNotAllowedError = require('../../exceptions/domain/essay/EssayAiCorrectionNotAllowedError');
+const EssayDeletionNotAllowedError = require('../../exceptions/domain/essay/EssayDeletionNotAllowedError');
 
 async function getAllEssay(filters = {}) {
     return essayRepository.findAll(filters);
@@ -125,6 +127,10 @@ async function deleteEssay(id) {
     const essay = await getEssayById(id);
     if(!essay) throw new EssayNotFoundError();
 
+    if(essay.reviewerId) {
+        throw new EssayDeletionNotAllowedError();
+    }
+
     await essay.destroy();
      return { message: "Redação excluída com sucesso!" };
 };
@@ -181,6 +187,10 @@ async function finishReview(essayId, reviewerId, data) {
 async function correctEssayWithAI(userId, essayId) {
   const essay = await essayRepository.findById(essayId);
   if (!essay) throw new EssayNotFoundError();
+
+  if (essay.reviewerId) {
+    throw new EssayAiCorrectionNotAllowedError();
+  }
 
   if (essay.status !== "PENDENTE") {
     throw new EssayUpdateNotAllowedError();
