@@ -12,12 +12,6 @@ async function seedMenus() {
       route: "/essays-corrector",
       icon: "FileText",
     },
-    {
-      key: "schedules-corrector",
-      name: "Agenda de Correções",
-      route: "/schedules-corrector",
-      icon: "Calendar",
-    },
 
     // MENUS ESTUDANTE
     {
@@ -38,13 +32,7 @@ async function seedMenus() {
       route: "/models",
       icon: "BookOpen",
     },
-    {
-      key: "calendar",
-      name: "Agendamentos",
-      route: "/calendar",
-      icon: "Calendar",
-    },
-
+    
     // MENUS ADMIN
     {
       key: "admin-home",
