@@ -13,11 +13,18 @@ module.exports = {
     if (filters.userId) {
         where.userId = filters.userId;
     }
-
+    
     return Essay.findAll({
         where,
         order: [["id", "ASC"]],
-        include: ["category"]
+        include: [
+            "category",
+            {
+                model: User,
+                as: "user",
+                attributes: ["id", "name", "email"]
+            }
+        ]
     });
 },
 

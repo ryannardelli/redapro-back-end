@@ -25,7 +25,12 @@ function toEssayDto(essay) {
             general: essay.generalFeedback
         } : null,
 
-        userId: essay.userId ?? null,
+        user: essay.user ? {
+            id: essay.user.id,
+            name: essay.user.name,
+            email: essay.user.email
+        } : null,
+        
         reviewerId: essay.reviewerId ?? null,
     }
 }
