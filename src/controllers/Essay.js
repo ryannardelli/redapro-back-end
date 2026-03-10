@@ -113,7 +113,10 @@ async function finishReview(req, res, next) {
 
         const io = req.app.get("io");
 
-        io.to(`user_${essay.userId}`).emit("essay:status", {
+         io.to(`user_${essay.userId}`).emit("essay:status", {
+            id: essay.id,
+            status: essay.status,
+            note: essay.note,
             message: "Sua redação foi corrigida."
         });
 
