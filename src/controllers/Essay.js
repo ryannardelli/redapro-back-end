@@ -117,6 +117,7 @@ async function finishReview(req, res, next) {
             id: essay.id,
             status: essay.status,
             note: essay.note,
+            feedback: essay.feedback,
             message: "Sua redação foi corrigida."
         });
 
