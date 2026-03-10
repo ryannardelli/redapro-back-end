@@ -103,7 +103,6 @@ async function finishReview(req, res, next) {
         const essayId = Number(req.params.id);
         const reviewerId = req.user.id;
 
-        // Recebendo todas as competências e feedback do corpo da requisição
         const { c1, c2, c3, c4, c5, generalFeedback } = req.body;
 
         const essay = await essayService.finishReview(

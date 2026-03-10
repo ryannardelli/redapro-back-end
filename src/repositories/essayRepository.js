@@ -28,7 +28,18 @@ module.exports = {
     });
 },
 
-    findById: (id) => Essay.findByPk(id),
+    findById: (id) =>
+    Essay.findByPk(id, {
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "name", "email"]
+        },
+        "category"
+      ]
+    }),
+
     findByTitle(title, userId, categoryId) {
         const where = { title };
 
