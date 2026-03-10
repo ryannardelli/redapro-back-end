@@ -85,7 +85,7 @@ async function startReview(req, res, next) {
         const io = req.app.get("io");
 
         io.to(`user_${essay.userId}`).emit("essay:status", {
-            essayId: essay.id,
+            id: essay.id,
             status: essay.status,
             message: "Sua redação entrou em correção."
         });
