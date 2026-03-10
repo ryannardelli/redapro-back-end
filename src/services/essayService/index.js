@@ -127,7 +127,7 @@ async function deleteEssay(id) {
     const essay = await getEssayById(id);
     if(!essay) throw new EssayNotFoundError();
 
-    if(essay.reviewerId) {
+    if(essay.status === "EM_CORRECAO") {
         throw new EssayDeletionNotAllowedError();
     }
 
