@@ -196,81 +196,197 @@ async function correctEssayWithAI(userId, essayId) {
     throw new EssayUpdateNotAllowedError();
   }
 
-  // Limite semanal
-  const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-  const aiCorrectionsLastWeek = await essayRepository.count({
-    reviewerId: null,
-    userId,
-    status: "CORRIGIDA",
-    updatedAt: oneWeekAgo
-  });
-
-  if (aiCorrectionsLastWeek >= 30) {
-    throw new AISubmissionLimitError();
-  }
-
   essay.status = "EM_CORRECAO";
   await essay.save();
 
-  const prompt = `
-Avalie a seguinte redação do usuário:
+  try {
 
-Título: ${essay.title}
+   const prompt = `
+Você é um corretor especialista em redações do ENEM.
 
-Conteúdo:
+Analise cuidadosamente a redação abaixo seguindo os critérios oficiais do ENEM.
+
+Avalie cada competência com nota de 0 a 200:
+
+C1 – Domínio da norma padrão da língua portuguesa (gramática, ortografia, concordância, pontuação).
+
+C2 – Compreensão da proposta de redação e desenvolvimento do tema dentro do gênero dissertativo-argumentativo.
+
+C3 – Seleção e organização de argumentos para defender um ponto de vista.
+
+C4 – Uso adequado de mecanismos linguísticos de coesão e conexão entre as ideias.
+
+C5 – Proposta de intervenção para o problema abordado, respeitando os direitos humanos.
+
+Para cada competência:
+- explique brevemente o motivo da nota
+- cite exemplos do texto quando possível
+
+Depois escreva um feedback geral detalhado sobre a redação, incluindo:
+- pontos fortes
+- pontos que precisam melhorar
+- sugestões práticas para melhorar a escrita
+
+Título da redação:
+${essay.title}
+
+Texto da redação:
 ${essay.content}
 
-Avalie em 5 competências (C1 a C5), cada uma de 0 a 200 pontos.
-Forneça também um feedback geral resumido (2-3 frases).
+Responda APENAS em JSON válido no seguinte formato:
 
-Retorne um JSON exatamente neste formato:
 {
   "c1": number,
+  "c1_feedback": string,
   "c2": number,
+  "c2_feedback": string,
   "c3": number,
+  "c3_feedback": string,
   "c4": number,
+  "c4_feedback": string,
   "c5": number,
+  "c5_feedback": string,
   "generalFeedback": string
 }
+
+Regras importantes:
+- Não escreva nada fora do JSON
+- Seja específico ao analisar o texto
+- Não repita feedback genérico
+- Use exemplos da redação quando possível
 `;
+    const responseText = await generateWithOpenAI(prompt);
 
-  const responseText = await generateWithOpenAI(prompt);
-
-  let aiResult;
-  try {
-    aiResult = JSON.parse(responseText);
-  } catch {
-    throw new Error("Resposta da IA inválida ou não está em JSON.");
-  }
-
-  const competencies = ["c1", "c2", "c3", "c4", "c5"];
-  for (const c of competencies) {
-    if (
-      typeof aiResult[c] !== "number" ||
-      aiResult[c] < 0 ||
-      aiResult[c] > 200
-    ) {
-      throw new InvalidCompetenceError(`Nota da competência ${c} inválida.`);
+    let aiResult;
+    try {
+      aiResult = JSON.parse(responseText);
+    } catch {
+      throw new Error("Resposta da IA inválida ou não está em JSON.");
     }
+
+    const competencies = ["c1", "c2", "c3", "c4", "c5"];
+    for (const c of competencies) {
+      if (
+        typeof aiResult[c] !== "number" ||
+        aiResult[c] < 0 ||
+        aiResult[c] > 200
+      ) {
+        throw new InvalidCompetenceError(`Nota da competência ${c} inválida.`);
+      }
+    }
+
+    essay.c1 = aiResult.c1;
+    essay.c2 = aiResult.c2;
+    essay.c3 = aiResult.c3;
+    essay.c4 = aiResult.c4;
+    essay.c5 = aiResult.c5;
+
+    essay.note = essay.c1 + essay.c2 + essay.c3 + essay.c4 + essay.c5;
+    essay.generalFeedback = aiResult.generalFeedback;
+
+    essay.status = "CORRIGIDA";
+
+    await essay.save();
+
+    return essay;
+
+  } catch (error) {
+
+    // volta o status se a IA falhar
+    essay.status = "PENDENTE";
+    await essay.save();
+
+    throw error;
   }
-
-  essay.c1 = aiResult.c1;
-  essay.c2 = aiResult.c2;
-  essay.c3 = aiResult.c3;
-  essay.c4 = aiResult.c4;
-  essay.c5 = aiResult.c5;
-
-  essay.note =
-    essay.c1 + essay.c2 + essay.c3 + essay.c4 + essay.c5;
-
-  essay.generalFeedback = aiResult.generalFeedback;
-  essay.status = "CORRIGIDA";
-
-  await essay.save();
-
-  return essay;
 }
+
+// async function correctEssayWithAI(userId, essayId) {
+//   const essay = await essayRepository.findById(essayId);
+//   if (!essay) throw new EssayNotFoundError();
+
+//   if (essay.reviewerId) {
+//     throw new EssayAiCorrectionNotAllowedError();
+//   }
+
+//   if (essay.status !== "PENDENTE") {
+//     throw new EssayUpdateNotAllowedError();
+//   }
+
+//   // Limite semanal
+//   const oneWeekAgo = new Date();
+//   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+//   const aiCorrectionsLastWeek = await essayRepository.count({
+//     reviewerId: null,
+//     userId,
+//     status: "CORRIGIDA",
+//     updatedAt: oneWeekAgo
+//   });
+
+//   if (aiCorrectionsLastWeek >= 30) {
+//     throw new AISubmissionLimitError();
+//   }
+
+//   essay.status = "EM_CORRECAO";
+//   await essay.save();
+
+//   const prompt = `
+// Avalie a seguinte redação do usuário:
+
+// Título: ${essay.title}
+
+// Conteúdo:
+// ${essay.content}
+
+// Avalie em 5 competências (C1 a C5), cada uma de 0 a 200 pontos.
+// Forneça também um feedback geral resumido (2-3 frases).
+
+// Retorne um JSON exatamente neste formato:
+// {
+//   "c1": number,
+//   "c2": number,
+//   "c3": number,
+//   "c4": number,
+//   "c5": number,
+//   "generalFeedback": string
+// }
+// `;
+
+//   const responseText = await generateWithOpenAI(prompt);
+
+//   let aiResult;
+//   try {
+//     aiResult = JSON.parse(responseText);
+//   } catch {
+//     throw new Error("Resposta da IA inválida ou não está em JSON.");
+//   }
+
+//   const competencies = ["c1", "c2", "c3", "c4", "c5"];
+//   for (const c of competencies) {
+//     if (
+//       typeof aiResult[c] !== "number" ||
+//       aiResult[c] < 0 ||
+//       aiResult[c] > 200
+//     ) {
+//       throw new InvalidCompetenceError(`Nota da competência ${c} inválida.`);
+//     }
+//   }
+
+//   essay.c1 = aiResult.c1;
+//   essay.c2 = aiResult.c2;
+//   essay.c3 = aiResult.c3;
+//   essay.c4 = aiResult.c4;
+//   essay.c5 = aiResult.c5;
+
+//   essay.note =
+//     essay.c1 + essay.c2 + essay.c3 + essay.c4 + essay.c5;
+
+//   essay.generalFeedback = aiResult.generalFeedback;
+//   essay.status = "CORRIGIDA";
+
+//   await essay.save();
+
+//   return essay;
+// }
 
 module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser, startReview, finishReview, correctEssayWithAI };

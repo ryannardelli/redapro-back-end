@@ -9,7 +9,7 @@ const { isUnexpected } = require("@azure-rest/ai-inference");
 
     const response = await client.path("/chat/completions").post({
       body: {
-        model: "openai/gpt-4o-mini",
+        model: "openai/gpt-4.1-mini",
         messages: [
           { role: "system", content: "Você é um assistente que responde apenas com OK" },
           { role: "user", content: "Responda apenas com OK" }

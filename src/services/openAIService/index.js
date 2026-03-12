@@ -9,7 +9,7 @@ const { isUnexpected } = require("@azure-rest/ai-inference");
 async function generateWithOpenAI(prompt) {
   const response = await client.path("/chat/completions").post({
     body: {
-      model: "openai/gpt-4o-mini",
+      model: "openai/gpt-4.1-mini",
       messages: [
         {
           role: "system",
@@ -25,6 +25,8 @@ async function generateWithOpenAI(prompt) {
       max_tokens: 800
     }
   });
+
+  console.log("Resposta completa da API:", response);
 
   if (isUnexpected(response)) {
     throw new Error(
