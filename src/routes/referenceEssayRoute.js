@@ -91,7 +91,6 @@ router.get("/:id", checkToken, referenceEssayController.findById);
  *             title: "O impacto da tecnologia na educação"
  *             content: "Texto completo da redação nota 1000..."
  *             year: 2023
- *             pdf_url: "https://site.com/redacao.pdf"
  *             category_id: 1
  *     responses:
  *       201:

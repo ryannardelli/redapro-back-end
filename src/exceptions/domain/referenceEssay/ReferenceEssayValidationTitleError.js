@@ -1,5 +1,5 @@
 class ReferenceEssayValidationTitle extends Error {
-    constructor(message = "O título deve ter entre 5 e 100 caracteres.") {
+    constructor(message = "O título deve ter entre 5 e 200 caracteres.") {
         super(message);
         this.name = "ReferenceEssayValidationTitle";
         this.statusCode = 400;

@@ -29,7 +29,7 @@ async function createReferenceEssay(data) {
     });
     if (existing.length > 0) throw new ReferenceEssayAlreadyExistsError(data.title);
 
-    if (!data.title || data.title.trim().length < 5 || data.title.trim().length > 100) {
+    if (!data.title || data.title.trim().length < 5 || data.title.trim().length > 200) {
         throw new ReferenceEssayValidationTitle();
     }
 
@@ -43,6 +43,7 @@ async function createReferenceEssay(data) {
     }
 
     return referenceEssayRepository.create({
+        authorName: data.authorName.trim(),
         title: data.title.trim(),
         content: data.content.trim(),
         year: data.year,

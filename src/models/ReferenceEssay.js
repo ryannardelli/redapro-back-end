@@ -9,12 +9,12 @@ const ReferenceEssay = sequelize.define("ReferenceEssay", {
     },
 
     title: {
-    type: DataTypes.STRING(100),
+    type: DataTypes.STRING(200),
     allowNull: false,
     validate: {
       len: {
-        args: [5, 100],
-        msg: "O título deve ter entre 5 e 100 caracteres."
+        args: [5, 200],
+        msg: "O título deve ter entre 5 e 200 caracteres."
       }
     }
   },
