@@ -1,5 +1,6 @@
 function toUpdateDto(body) {
     return{
+        authorName: body.authorName,
         title: body.title,
         content: body.content,
         year: body.year,

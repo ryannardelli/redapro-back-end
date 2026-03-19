@@ -2,6 +2,7 @@ function toReferenceEssayDto(essay) {
     return {
         id: essay.id,
         title: essay.title,
+        authorName: essay.authorName,
         content: essay.content,
         year: essay.year,
         pdf_url: essay.pdf_url,

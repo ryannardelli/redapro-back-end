@@ -19,6 +19,17 @@ const ReferenceEssay = sequelize.define("ReferenceEssay", {
     }
   },
 
+  authorName: {
+    type: DataTypes.STRING(100),
+    allowNull: false,
+    validate: {
+      len: {
+        args: [3, 100],
+        msg: "O nome do autor deve ter entre 3 e 100 caracteres."
+      }
+    }
+  },
+
    content: {
     type: DataTypes.TEXT,
     allowNull: false,

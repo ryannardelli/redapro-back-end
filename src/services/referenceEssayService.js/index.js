@@ -6,6 +6,7 @@ const ReferenceEssayYearOutOfRangeError = require("../../exceptions/domain/refer
 const CategoryNotFoundError = require("../../exceptions/domain/category/CategoryNotFoundError");
 const categoryRepository = require("../../repositories/categoryRepository");
 const referenceEssayRepository = require("../../repositories/referenceEssayRepository");
+const ReferenceEssayValidationAuthorName = require("../../exceptions/domain/referenceEssay/ReferenceEssayValidationAuthorName");
 
 async function getAllReferenceEssay(filters = {}) {
     return referenceEssayRepository.findAll(filters);
@@ -58,10 +59,20 @@ async function updateReferenceEssay(id, updateDto) {
 
     const updateData = {};
 
+    if (updateDto.authorName !== undefined) {
+        const title = updateDto.title.trim();
+
+         if (title.authorName < 5 || title.authorName > 100) {
+            throw new ReferenceEssayValidationAuthorName();
+        }
+
+        updateData.title = title;
+    }
+
     if (updateDto.title !== undefined) {
         const title = updateDto.title.trim();
 
-        if (title.length < 5 || title.length > 100) {
+         if (title.authorName < 5 || title.length > 100) {
             throw new ReferenceEssayValidationTitle();
         }
 

@@ -87,6 +87,7 @@ router.get("/:id", checkToken, referenceEssayController.findById);
  *       content:
  *         application/json:
  *           example:
+ *             authorName: "João Silva"
  *             title: "O impacto da tecnologia na educação"
  *             content: "Texto completo da redação nota 1000..."
  *             year: 2023

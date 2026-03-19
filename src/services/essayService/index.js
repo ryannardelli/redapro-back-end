@@ -57,7 +57,7 @@ async function createEssay(data, userId) {
         throw new EssayAlreadyExistsError(data.title);
     }
 
-    if (!data.title || data.title.trim().length < 5 || data.title.trim().length > 50) {
+    if (!data.title || data.title.trim().length < 5 || data.title.trim().length > 100) {
         throw new EssayValidationTitleError();
     }
 
