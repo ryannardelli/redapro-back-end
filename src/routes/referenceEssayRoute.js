@@ -125,6 +125,12 @@ router.post("/", checkToken, authorize(["admin"]), referenceEssayController.crea
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/UpdateReferenceEssay'
+ *           example:
+ *             authorName: "João Silva"
+ *             title: "O impacto da tecnologia na educação"
+ *             content: "Texto completo da redação nota 1000..."
+ *             year: 2023
+ *             category_id: 1
  *     responses:
  *       200:
  *         description: Redação atualizada com sucesso
