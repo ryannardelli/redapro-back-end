@@ -1,6 +1,6 @@
 const ReferenceEssayAlreadyExistsError = require("../../exceptions/domain/referenceEssay/ReferenceEssayAlreadyExistsError");
 const ReferenceEssayContentTooShortError = require("../../exceptions/domain/referenceEssay/ReferenceEssayContentTooShortError");
-const ReferenceEssayNotFoundError = require("../../exceptions/domain/referenceEssay/referenceEssayNotFoundError");
+const ReferenceEssayNotFoundError = require("../../exceptions/domain/referenceEssay/ReferenceEssayNotFoundError");
 const ReferenceEssayValidationTitle = require("../../exceptions/domain/referenceEssay/ReferenceEssayValidationTitleError");
 const ReferenceEssayYearOutOfRangeError = require("../../exceptions/domain/referenceEssay/ReferenceEssayYearOutOfRangeError");
 const CategoryNotFoundError = require("../../exceptions/domain/category/CategoryNotFoundError");
