@@ -184,7 +184,7 @@ async function finishReview(essayId, reviewerId, data) {
     return essay;
 }
 
-async function correctEssayWithAI(userId, essayId) {
+async function correctEssayWithAI(essayId) {
   const essay = await essayRepository.findById(essayId);
   if (!essay) throw new EssayNotFoundError();
 
@@ -194,6 +194,20 @@ async function correctEssayWithAI(userId, essayId) {
 
   if (essay.status !== "PENDENTE") {
     throw new EssayUpdateNotAllowedError();
+  }
+
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+  const aiCorrectionsLastWeek = await essayRepository.count({
+    reviewerId: null,
+    userId,
+    status: "CORRIGIDA",
+    updatedAt: oneWeekAgo
+  });
+
+  if (aiCorrectionsLastWeek >= 2) {
+    throw new AISubmissionLimitError();
   }
 
   essay.status = "EM_CORRECAO";
