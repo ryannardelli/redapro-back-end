@@ -184,7 +184,7 @@ async function finishReview(essayId, reviewerId, data) {
     return essay;
 }
 
-async function correctEssayWithAI(essayId) {
+async function correctEssayWithAI(userId, essayId) {
   const essay = await essayRepository.findById(essayId);
   if (!essay) throw new EssayNotFoundError();
 
