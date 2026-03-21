@@ -18,7 +18,11 @@ describe("POST /auth/register", () => {
       .send({ name: "Ryan", email: "r@test.com", password: "12345678" });
 
     expect(res.status).toBe(201);
-    expect(res.body).toHaveProperty("message", "Usuário criado com sucesso!");
+    expect(res.body).toMatchObject({
+      id: 1,
+      name: "Ryan",
+      email: "r@test.com",
+    });
   });
 
   it("deve retornar erro de nome inválido", async () => {
