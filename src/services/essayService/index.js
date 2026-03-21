@@ -201,60 +201,106 @@ async function correctEssayWithAI(userId, essayId) {
 
   try {
 
-   const prompt = `
-Você é um corretor especialista em redações do ENEM.
+  const prompt = `
+        Você é um corretor EXTREMAMENTE RIGOROSO do ENEM.
 
-Analise cuidadosamente a redação abaixo seguindo os critérios oficiais do ENEM.
+        Sua correção deve ser CRITERIOSA e PUNITIVA, semelhante à de corretores oficiais.
 
-Avalie cada competência com nota de 0 a 200:
+        NÃO seja generoso. Penalize qualquer falha.
 
-C1 – Domínio da norma padrão da língua portuguesa (gramática, ortografia, concordância, pontuação).
+        Avalie cada competência de 0 a 200:
 
-C2 – Compreensão da proposta de redação e desenvolvimento do tema dentro do gênero dissertativo-argumentativo.
+        C1 – Norma padrão:
+        - 200: nenhum erro
+        - 160: poucos erros leves
+        - 120: erros recorrentes
+        - 80 ou menos: muitos erros
 
-C3 – Seleção e organização de argumentos para defender um ponto de vista.
+        C2 – Tema:
+        - 200: abordagem completa e aprofundada
+        - 160: abordagem adequada, mas superficial
+        - 120 ou menos: tangencia ou foge parcialmente
 
-C4 – Uso adequado de mecanismos linguísticos de coesão e conexão entre as ideias.
+        C3 – Argumentação:
+        - 200: argumentos consistentes, bem desenvolvidos
+        - 160: argumentos bons, mas pouco aprofundados
+        - 120: argumentos genéricos ou pouco desenvolvidos
+        - 80 ou menos: ausência de argumentação clara
 
-C5 – Proposta de intervenção para o problema abordado, respeitando os direitos humanos.
+        Penalizações obrigatórias:
+        - Texto em parágrafo único → máximo 140
+        - Falta de progressão argumentativa → reduzir nota
 
-Para cada competência:
-- explique brevemente o motivo da nota
-- cite exemplos do texto quando possível
+        C4 – Coesão:
+        - 200: excelente uso de conectivos e progressão
+        - 160: bom, com pequenas falhas
+        - 120: repetição ou pouca variedade
+        - 80 ou menos: falhas graves de conexão
 
-Depois escreva um feedback geral detalhado sobre a redação, incluindo:
-- pontos fortes
-- pontos que precisam melhorar
-- sugestões práticas para melhorar a escrita
+        Penalizações:
+        - Falta de paragrafação → reduzir no mínimo 40 pontos
 
-Título da redação:
-${essay.title}
+        C5 – Intervenção:
+        A proposta DEVE conter:
+        - agente
+        - ação
+        - meio
+        - finalidade
+        - detalhamento
 
-Texto da redação:
-${essay.content}
+        Notas:
+        - 200: completa com todos os elementos
+        - 160: falta 1 elemento
+        - 120: genérica e pouco detalhada
+        - 80 ou menos: incompleta ou ausente
 
-Responda APENAS em JSON válido no seguinte formato:
+        Penalização obrigatória:
+        - Proposta genérica (“políticas públicas”) → máximo 120
 
-{
-  "c1": number,
-  "c1_feedback": string,
-  "c2": number,
-  "c2_feedback": string,
-  "c3": number,
-  "c3_feedback": string,
-  "c4": number,
-  "c4_feedback": string,
-  "c5": number,
-  "c5_feedback": string,
-  "generalFeedback": string
-}
+        ---
 
-Regras importantes:
-- Não escreva nada fora do JSON
-- Seja específico ao analisar o texto
-- Não repita feedback genérico
-- Use exemplos da redação quando possível
-`;
+        Para cada competência:
+        - dê a nota
+        - explique de forma objetiva
+        - cite trechos do texto
+
+        Depois:
+        - calcule a nota total (0–1000)
+        - faça um feedback geral detalhado e crítico
+
+        ---
+
+        Título:
+        ${essay.title}
+
+        Texto:
+        ${essay.content}
+
+        ---
+
+        Responda APENAS em JSON:
+
+        {
+        "c1": number,
+        "c1_feedback": string,
+        "c2": number,
+        "c2_feedback": string,
+        "c3": number,
+        "c3_feedback": string,
+        "c4": number,
+        "c4_feedback": string,
+        "c5": number,
+        "c5_feedback": string,
+        "total": number,
+        "generalFeedback": string
+        }
+
+        Regras:
+        - Seja rigoroso
+        - Penalize erros
+        - NÃO seja generoso
+        - NÃO invente qualidades
+        `;
     const responseText = await generateWithOpenAI(prompt);
 
     let aiResult;
@@ -299,94 +345,5 @@ Regras importantes:
     throw error;
   }
 }
-
-// async function correctEssayWithAI(userId, essayId) {
-//   const essay = await essayRepository.findById(essayId);
-//   if (!essay) throw new EssayNotFoundError();
-
-//   if (essay.reviewerId) {
-//     throw new EssayAiCorrectionNotAllowedError();
-//   }
-
-//   if (essay.status !== "PENDENTE") {
-//     throw new EssayUpdateNotAllowedError();
-//   }
-
-//   // Limite semanal
-//   const oneWeekAgo = new Date();
-//   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-//   const aiCorrectionsLastWeek = await essayRepository.count({
-//     reviewerId: null,
-//     userId,
-//     status: "CORRIGIDA",
-//     updatedAt: oneWeekAgo
-//   });
-
-//   if (aiCorrectionsLastWeek >= 30) {
-//     throw new AISubmissionLimitError();
-//   }
-
-//   essay.status = "EM_CORRECAO";
-//   await essay.save();
-
-//   const prompt = `
-// Avalie a seguinte redação do usuário:
-
-// Título: ${essay.title}
-
-// Conteúdo:
-// ${essay.content}
-
-// Avalie em 5 competências (C1 a C5), cada uma de 0 a 200 pontos.
-// Forneça também um feedback geral resumido (2-3 frases).
-
-// Retorne um JSON exatamente neste formato:
-// {
-//   "c1": number,
-//   "c2": number,
-//   "c3": number,
-//   "c4": number,
-//   "c5": number,
-//   "generalFeedback": string
-// }
-// `;
-
-//   const responseText = await generateWithOpenAI(prompt);
-
-//   let aiResult;
-//   try {
-//     aiResult = JSON.parse(responseText);
-//   } catch {
-//     throw new Error("Resposta da IA inválida ou não está em JSON.");
-//   }
-
-//   const competencies = ["c1", "c2", "c3", "c4", "c5"];
-//   for (const c of competencies) {
-//     if (
-//       typeof aiResult[c] !== "number" ||
-//       aiResult[c] < 0 ||
-//       aiResult[c] > 200
-//     ) {
-//       throw new InvalidCompetenceError(`Nota da competência ${c} inválida.`);
-//     }
-//   }
-
-//   essay.c1 = aiResult.c1;
-//   essay.c2 = aiResult.c2;
-//   essay.c3 = aiResult.c3;
-//   essay.c4 = aiResult.c4;
-//   essay.c5 = aiResult.c5;
-
-//   essay.note =
-//     essay.c1 + essay.c2 + essay.c3 + essay.c4 + essay.c5;
-
-//   essay.generalFeedback = aiResult.generalFeedback;
-//   essay.status = "CORRIGIDA";
-
-//   await essay.save();
-
-//   return essay;
-// }
 
 module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser, startReview, finishReview, correctEssayWithAI };

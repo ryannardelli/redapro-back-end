@@ -13,7 +13,7 @@ const Essay = sequelize.define("Essay", {
     allowNull: false,
     validate: {
       len: {
-        args: [5, 50],
+        args: [5, 100],
         msg: "O título deve ter entre 5 e 100 caracteres."
       }
     }
