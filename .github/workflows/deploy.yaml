@@ -36,13 +36,14 @@ jobs:
           IMAGE=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/redapro/redapro-backend:${{ github.sha }}
           docker push $IMAGE
 
-      - name: Deploy to Cloud Run
-        run: |
-          IMAGE=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/redapro/redapro-backend:${{ github.sha }}
+     - name: Deploy to Cloud Run
+  run: |
+    IMAGE=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/redapro/redapro-backend:${{ github.sha }}
 
-          gcloud run deploy redapro-backend \
-            --image $IMAGE \
-            --platform managed \
-            --region us-central1 \
-            --allow-unauthenticated \
-            --set-env-vars=DB_HOST=${{ secrets.DB_HOST }},DB_PORT=${{ secrets.DB_PORT }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_NAME=${{ secrets.DB_NAME }},PORT=3000,SECRET=${{ secrets.SECRET }}
+    gcloud run deploy redapro-backend \
+      --image $IMAGE \
+      --platform managed \
+      --region us-central1 \
+      --allow-unauthenticated \
+      --add-cloudsql-instances=seu-projeto:us-central1:redapro-db \
+      --set-env-vars=DB_HOST=/cloudsql/seu-projeto:us-central1:redapro-db,DB_PORT=5432,DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_NAME=${{ secrets.DB_NAME }},PORT=3000,SECRET=${{ secrets.SECRET }}
