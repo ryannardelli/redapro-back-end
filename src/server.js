@@ -54,8 +54,7 @@ async function connectDB() {
             foreignKey: 'menuId'
         });
 
-        // Sincronizar todas as tabelas
-        await sequelize.sync({ alter: true });
+        await sequelize.sync();
 
         // Executar seeds do sistema
         await seedProfiles();
@@ -65,6 +64,7 @@ async function connectDB() {
         console.log("Tabelas sincronizadas com sucesso!");
     } catch(e) {
         console.log("Erro ao conectar com o banco de dados.", e);
+        throw e;
     }
 }
 
