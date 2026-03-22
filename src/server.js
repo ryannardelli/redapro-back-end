@@ -68,9 +68,19 @@ async function connectDB() {
     }
 }
 
-async function startServer() {
-    await connectDB();
+// async function startServer() {
+//     await connectDB();
 
+//     const server = http.createServer(app);
+
+//     setupSocket(server, app);
+
+//     server.listen(PORT, () => {
+//         console.log(`Servidor rodando na porta ${PORT}`);
+//     });
+// }
+
+async function startServer() {
     const server = http.createServer(app);
 
     setupSocket(server, app);
@@ -78,6 +88,8 @@ async function startServer() {
     server.listen(PORT, () => {
         console.log(`Servidor rodando na porta ${PORT}`);
     });
+
+    connectDB();
 }
 
 startServer();
