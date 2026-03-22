@@ -45,5 +45,4 @@ jobs:
             --platform managed \
             --region us-central1 \
             --allow-unauthenticated \
-            --add-cloudsql-instances=${{ secrets.GCP_PROJECT_ID }}:us-central1:redapro-db \
-            --set-env-vars="DB_HOST=34.41.62.232,DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_NAME=${{ secrets.DB_NAME }},SECRET=${{ secrets.SECRET }}"
+            --set-env-vars=DB_HOST=${{ secrets.DB_HOST }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_NAME=${{ secrets.DB_NAME }},SECRET=${{ secrets.SECRET }}
