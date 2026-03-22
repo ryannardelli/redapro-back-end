@@ -12,7 +12,7 @@ global.crypto.randomUUID ??= crypto.randomUUID;
 require("dotenv").config();
 
 const app = require("./app");
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 const setupSocket = require("./config/socket");
 const http = require("http");
 
