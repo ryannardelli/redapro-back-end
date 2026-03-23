@@ -1,78 +1,93 @@
-// const crypto = require("crypto");
-// const seedProfiles = require("./seeds/profile.seed");
-// const seedProfileMenus = require("./seeds/seedProfileMenus");
-// const seedMenus = require("./seeds/seedMenus");
+require("dotenv").config();
 
-// if (!global.crypto) {
-//   global.crypto = crypto.webcrypto;
-// }
+const app = require("./app");
+const http = require("http");
+const setupSocket = require("./config/socket");
+const sequelize = require("./config/database");
 
-// global.crypto.randomUUID ??= crypto.randomUUID;
+const seedProfiles = require("./seeds/profile.seed");
+const seedProfileMenus = require("./seeds/seedProfileMenus");
+const seedMenus = require("./seeds/seedMenus");
 
-// require("dotenv").config();
+const PORT = process.env.PORT || 8080;
 
-// const app = require("./app");
-// const PORT = process.env.PORT || 8080;
-// const setupSocket = require("./config/socket");
-// const http = require("http");
+const server = http.createServer(app);
 
-// const sequelize = require("./config/database");
+setupSocket(server);
 
-// async function connectDB() {
-//     try {
-//         await sequelize.authenticate();
-//         console.log("Conectado ao banco PostgreSQL com sucesso!");
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
 
-//         const User = require("./models/User");
-//         const Profile = require("./models/Profile");
-//         const Menu = require("./models/Menu");
-//         const ProfileMenu = require("./models/ProfileMenu");
-//         const Essay = require("./models/Essay");
-//         const Category = require("./models/Category");
-//         const ReferenceEssay = require("./models/ReferenceEssay");
+async function connectDB() {
+  try {
+    await sequelize.authenticate();
+    console.log("Conectado ao banco PostgreSQL com sucesso!");
 
-//         // Definir relacionamento antes de sincronizar
-//         Profile.hasMany(User, { foreignKey: 'profileId' });
-//         User.belongsTo(Profile, { foreignKey: 'profileId' });
+    // importar models
+    const User = require("./models/User");
+    const Profile = require("./models/Profile");
+    const Menu = require("./models/Menu");
+    const ProfileMenu = require("./models/ProfileMenu");
+    const Essay = require("./models/Essay");
+    const Category = require("./models/Category");
+    const ReferenceEssay = require("./models/ReferenceEssay");
 
-//         User.hasMany(Essay, { foreignKey: "userId", as: "essay" });
-//         Essay.belongsTo(User, { foreignKey: "userId", as: "user" });
+    Profile.hasMany(User, { foreignKey: "profileId" });
+    User.belongsTo(Profile, { foreignKey: "profileId" });
 
-//         Category.hasMany(Essay, { foreignKey: "categoryId", as: "essay" });
-//         Essay.belongsTo(Category, { foreignKey: "categoryId", as: "category" })
+    User.hasMany(Essay, { foreignKey: "userId", as: "essay" });
+    Essay.belongsTo(User, { foreignKey: "userId", as: "user" });
 
-//         Category.hasMany(ReferenceEssay, { foreignKey: "categoryId", as: "referenceEssay" });
-//         ReferenceEssay.belongsTo(Category, { foreignKey: "categoryId", as: "category" })
+    Category.hasMany(Essay, { foreignKey: "categoryId", as: "essay" });
+    Essay.belongsTo(Category, { foreignKey: "categoryId", as: "category" });
 
-//         Profile.belongsToMany(Menu, {
-//             through: ProfileMenu,
-//             foreignKey: 'profileId'
-//         });
+    Category.hasMany(ReferenceEssay, {
+      foreignKey: "categoryId",
+      as: "referenceEssay",
+    });
+    ReferenceEssay.belongsTo(Category, {
+      foreignKey: "categoryId",
+      as: "category",
+    });
 
-//         Menu.belongsToMany(Profile, {
-//             through: ProfileMenu,
-//             foreignKey: 'menuId'
-//         });
+    Profile.belongsToMany(Menu, {
+      through: ProfileMenu,
+      foreignKey: "profileId",
+    });
 
-//         await sequelize.sync();
+    Menu.belongsToMany(Profile, {
+      through: ProfileMenu,
+      foreignKey: "menuId",
+    });
 
-//          try {
-//             const profilesCount = await Profile.count();
+    await sequelize.sync();
+    console.log("Tabelas sincronizadas com sucesso!");
 
-//             if (profilesCount === 0) {
-//                 await seedProfiles();
-//                 await seedMenus();
-//                 await seedProfileMenus();
-//             }
-//             } catch (seedError) {
-//                 console.error("Erro nos seeds:", seedError);
-//             }
+    try {
+      const profilesCount = await Profile.count();
 
-//         console.log("Tabelas sincronizadas com sucesso!");
-//     } catch(e) {
-//         console.log("Erro ao conectar com o banco de dados.", e);
-//     }
-// }
+      if (profilesCount === 0) {
+        console.log("Executando seeds iniciais...");
+
+        await seedProfiles();
+        await seedMenus();
+        await seedProfileMenus();
+
+        console.log("Seeds executados com sucesso!");
+      }
+    } catch (seedError) {
+      console.error("Erro ao executar seeds:", seedError);
+    }
+
+  } catch (error) {
+    console.error("Erro ao conectar com o banco:", error);
+  }
+}
+
+connectDB().catch((err) => {
+  console.error("Erro geral no DB:", err);
+});
 
 // async function startServer() {
 //     try {
@@ -94,17 +109,3 @@
 // }
 
 // startServer();
-
-const express = require("express");
-
-const app = express();
-
-const PORT = process.env.PORT || 8080;
-
-app.get("/", (req, res) => {
-  res.send("OK");
-});
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log("Servidor rodando na porta", PORT);
-});
