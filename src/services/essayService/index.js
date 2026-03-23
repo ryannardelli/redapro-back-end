@@ -140,6 +140,10 @@ async function startReview(essayId, reviewerId) {
 
     if(!essay) throw new EssayNotFoundError();
 
+    if (essay.status === "EM_CORRECAO") {
+        return essay;
+    }
+
     if(essay.status !== "PENDENTE") {
         throw new EssayUpdateNotAllowedError();
     }

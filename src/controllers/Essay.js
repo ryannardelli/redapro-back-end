@@ -84,6 +84,8 @@ async function startReview(req, res, next) {
 
         const io = req.app.get("io");
 
+        console.log("🚀 Emitindo evento para sala:", `user_${essay.userId}`);
+
         io.to(`user_${essay.userId}`).emit("essay:status", {
             id: essay.id,
             status: essay.status,
@@ -142,10 +144,14 @@ async function correctWithAI(req, res, next) {
             message: "Sua redação foi corrigida pela IA."
         });
 
-        return res.status(200).json({
-            message: "Redação corrigida com IA com sucesso.",
-            essay: toEssayDto(essay)
+       io.to(`user_${essay.userId}`).emit("essay:status", {
+            id: essay.id,
+            status: essay.status,
+            note: essay.note,
+            feedback: essay.feedback,
+            message: "Sua redação foi corrigida pela IA."
         });
+
     } catch (err) {
         next(err);
     }
