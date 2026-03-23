@@ -60,13 +60,17 @@ async function connectDB() {
         // await seedMenus();
         // await seedProfileMenus();
 
-        const profilesCount = await Profile.count();
+         try {
+            const profilesCount = await Profile.count();
 
-        if (profilesCount === 0) {
-            await seedProfiles();
-            await seedMenus();
-            await seedProfileMenus();
-        }
+            if (profilesCount === 0) {
+                await seedProfiles();
+                await seedMenus();
+                await seedProfileMenus();
+            }
+            } catch (seedError) {
+                console.error("Erro nos seeds:", seedError);
+            }
 
         console.log("Tabelas sincronizadas com sucesso!");
     } catch(e) {
@@ -84,7 +88,9 @@ async function startServer() {
             console.log(`Servidor rodando na porta ${PORT}`);
         });
 
-        connectDB();
+        connectDB().catch(err => {
+            console.error("Erro geral no DB:", err);
+        });
 
     } catch (error) {
         console.error("Erro ao iniciar servidor:", error);
