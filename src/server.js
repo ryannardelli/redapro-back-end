@@ -69,15 +69,23 @@ async function connectDB() {
 }
 
 async function startServer() {
-    const server = http.createServer(app);
+    console.log("CHAMOU START SERVER");
 
-    setupSocket(server, app);
+    try {
+        await connectDB();
 
-    server.listen(PORT, '0.0.0.0', () => {
-        console.log(`Servidor rodando na porta ${PORT}`);
-    });
+        const server = http.createServer(app);
 
-    connectDB();
+        setupSocket(server, app);
+
+        server.listen(PORT, '0.0.0.0', () => {
+            console.log(`Servidor rodando na porta ${PORT}`);
+        });
+
+    } catch (error) {
+        console.error("Erro ao iniciar servidor:", error);
+        process.exit(1);
+    }
 }
 
 startServer();
