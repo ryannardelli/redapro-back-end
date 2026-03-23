@@ -41,8 +41,9 @@ jobs:
           IMAGE=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/redapro/redapro-backend:${{ github.sha }}
 
           gcloud run deploy redapro-backend \
-            --image $IMAGE \
-            --platform managed \
-            --region us-central1 \
-            --allow-unauthenticated \
-            --set-env-vars="DB_HOST=${{ secrets.DB_HOST }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_NAME=${{ secrets.DB_NAME }},SECRET=${{ secrets.SECRET }}"
+          --image $IMAGE \
+          --platform managed \
+          --region us-central1 \
+          --allow-unauthenticated \
+          --add-cloudsql-instances=${{ secrets.GCP_PROJECT_ID }}:us-central1:redapro-db \
+          --set-env-vars="DB_HOST=${{ secrets.DB_HOST }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_NAME=${{ secrets.DB_NAME }},SECRET=${{ secrets.SECRET }}"
