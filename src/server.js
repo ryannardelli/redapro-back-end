@@ -56,15 +56,21 @@ async function connectDB() {
 
         await sequelize.sync();
 
-        // Executar seeds do sistema
-        await seedProfiles();
-        await seedMenus();
-        await seedProfileMenus();
+        // await seedProfiles();
+        // await seedMenus();
+        // await seedProfileMenus();
+
+        const profilesCount = await Profile.count();
+
+        if (profilesCount === 0) {
+            await seedProfiles();
+            await seedMenus();
+            await seedProfileMenus();
+        }
 
         console.log("Tabelas sincronizadas com sucesso!");
     } catch(e) {
         console.log("Erro ao conectar com o banco de dados.", e);
-        process.exit(1);
     }
 }
 
@@ -82,7 +88,6 @@ async function startServer() {
 
     } catch (error) {
         console.error("Erro ao iniciar servidor:", error);
-        process.exit(1);
     }
 }
 
