@@ -24,45 +24,45 @@ async function connectDB() {
     await sequelize.authenticate();
     console.log("Conectado ao banco PostgreSQL com sucesso!");
 
-    const User = require("./models/User");
-    const Profile = require("./models/Profile");
-    const Menu = require("./models/Menu");
-    const ProfileMenu = require("./models/ProfileMenu");
-    const Essay = require("./models/Essay");
-    const Category = require("./models/Category");
-    const ReferenceEssay = require("./models/ReferenceEssay");
+    // const User = require("./models/User");
+    // const Profile = require("./models/Profile");
+    // const Menu = require("./models/Menu");
+    // const ProfileMenu = require("./models/ProfileMenu");
+    // const Essay = require("./models/Essay");
+    // const Category = require("./models/Category");
+    // const ReferenceEssay = require("./models/ReferenceEssay");
 
-    Profile.hasMany(User, { foreignKey: "profileId" });
-    User.belongsTo(Profile, { foreignKey: "profileId" });
+    // Profile.hasMany(User, { foreignKey: "profileId" });
+    // User.belongsTo(Profile, { foreignKey: "profileId" });
 
-    User.hasMany(Essay, { foreignKey: "userId", as: "essay" });
-    Essay.belongsTo(User, { foreignKey: "userId", as: "user" });
+    // User.hasMany(Essay, { foreignKey: "userId", as: "essay" });
+    // Essay.belongsTo(User, { foreignKey: "userId", as: "user" });
 
-    Category.hasMany(Essay, { foreignKey: "categoryId", as: "essay" });
-    Essay.belongsTo(Category, { foreignKey: "categoryId", as: "category" });
+    // Category.hasMany(Essay, { foreignKey: "categoryId", as: "essay" });
+    // Essay.belongsTo(Category, { foreignKey: "categoryId", as: "category" });
 
-    Category.hasMany(ReferenceEssay, {
-      foreignKey: "categoryId",
-      as: "referenceEssay",
-    });
+    // Category.hasMany(ReferenceEssay, {
+    //   foreignKey: "categoryId",
+    //   as: "referenceEssay",
+    // });
 
-    ReferenceEssay.belongsTo(Category, {
-      foreignKey: "categoryId",
-      as: "category",
-    });
+    // ReferenceEssay.belongsTo(Category, {
+    //   foreignKey: "categoryId",
+    //   as: "category",
+    // });
 
-    Profile.belongsToMany(Menu, {
-      through: ProfileMenu,
-      foreignKey: "profileId",
-    });
+    // Profile.belongsToMany(Menu, {
+    //   through: ProfileMenu,
+    //   foreignKey: "profileId",
+    // });
 
-    Menu.belongsToMany(Profile, {
-      through: ProfileMenu,
-      foreignKey: "menuId",
-    });
+    // Menu.belongsToMany(Profile, {
+    //   through: ProfileMenu,
+    //   foreignKey: "menuId",
+    // });
 
-    await sequelize.sync();
-    console.log("Tabelas sincronizadas com sucesso!");
+    // await sequelize.sync();
+    // console.log("Tabelas sincronizadas com sucesso!");
 
     // const profilesCount = await Profile.count();
 
