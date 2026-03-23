@@ -24,7 +24,6 @@ async function connectDB() {
     await sequelize.authenticate();
     console.log("Conectado ao banco PostgreSQL com sucesso!");
 
-    // importar models
     const User = require("./models/User");
     const Profile = require("./models/Profile");
     const Menu = require("./models/Menu");
@@ -46,6 +45,7 @@ async function connectDB() {
       foreignKey: "categoryId",
       as: "referenceEssay",
     });
+
     ReferenceEssay.belongsTo(Category, {
       foreignKey: "categoryId",
       as: "category",
@@ -64,30 +64,29 @@ async function connectDB() {
     await sequelize.sync();
     console.log("Tabelas sincronizadas com sucesso!");
 
-    try {
-      const profilesCount = await Profile.count();
+    const profilesCount = await Profile.count();
 
-      if (profilesCount === 0) {
-        console.log("Executando seeds iniciais...");
+    if (profilesCount === 0) {
+      console.log("Executando seeds iniciais...");
 
+      try {
         await seedProfiles();
         await seedMenus();
         await seedProfileMenus();
 
         console.log("Seeds executados com sucesso!");
+      } catch (seedError) {
+        console.error("Erro ao executar seeds:", seedError);
       }
-    } catch (seedError) {
-      console.error("Erro ao executar seeds:", seedError);
     }
 
   } catch (error) {
     console.error("Erro ao conectar com o banco:", error);
+
   }
 }
 
-connectDB().catch((err) => {
-  console.error("Erro geral no DB:", err);
-});
+connectDB();
 
 // async function startServer() {
 //     try {
