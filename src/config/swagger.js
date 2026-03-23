@@ -10,7 +10,7 @@ const options = {
       description: "Documentação para o sistema desenvolvido em Node.js",
     },
   },
-  apis: ["./src/routes/*.js"], // Arquivos que contém as rotas com documentação
+  apis: ["./src/routes/*.js"],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
