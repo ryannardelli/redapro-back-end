@@ -1,9 +1,14 @@
 const { Server } = require("socket.io");
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://redapro-platform.vercel.app"
+];
+
 function setupSocket(server, app) {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: allowedOrigins,
       credentials: true
     }
   });
