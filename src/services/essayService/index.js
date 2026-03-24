@@ -219,12 +219,26 @@ async function correctEssayWithAI(userId, essayId) {
 
   try {
 
-  const prompt = `
+    const prompt = `
         Você é um corretor EXTREMAMENTE RIGOROSO do ENEM.
 
-        Sua correção deve ser CRITERIOSA e PUNITIVA, semelhante à de corretores oficiais.
+        Sua correção deve ser CRITERIOSA, PUNITIVA e REALISTA, semelhante à de corretores oficiais.
 
         NÃO seja generoso. Penalize qualquer falha.
+
+        ---
+
+        ANTES de avaliar:
+
+        - Considere que cada linha tem aproximadamente 10 palavras
+        - Estime a quantidade de linhas do texto
+
+        REGRAS OBRIGATÓRIAS DE LIMITE POR TAMANHO:
+        - Menos de 15 linhas → nota total MÁXIMA = 600
+        - Entre 15 e 19 linhas → nota total MÁXIMA = 760
+        - 20 ou mais linhas → sem limite
+
+        ---
 
         Avalie cada competência de 0 a 200:
 
@@ -234,32 +248,46 @@ async function correctEssayWithAI(userId, essayId) {
         - 120: erros recorrentes
         - 80 ou menos: muitos erros
 
-        C2 – Tema:
+        ---
+
+        C2 – Compreensão do tema:
         - 200: abordagem completa e aprofundada
-        - 160: abordagem adequada, mas superficial
-        - 120 ou menos: tangencia ou foge parcialmente
+        - 160: adequada, mas superficial
+        - 120 ou menos: tangencia ou incompleta
+
+        PENALIZAÇÃO OBRIGATÓRIA:
+        - Ausência de repertório sociocultural → C2 máximo 160
+        - Repertório genérico → C2 máximo 180
+
+        ---
 
         C3 – Argumentação:
-        - 200: argumentos consistentes, bem desenvolvidos
-        - 160: argumentos bons, mas pouco aprofundados
-        - 120: argumentos genéricos ou pouco desenvolvidos
-        - 80 ou menos: ausência de argumentação clara
+        - 200: argumentos consistentes e aprofundados
+        - 160: bons, mas pouco desenvolvidos
+        - 120: genéricos ou previsíveis
+        - 80 ou menos: fracos ou ausentes
 
-        Penalizações obrigatórias:
-        - Texto em parágrafo único → máximo 140
-        - Falta de progressão argumentativa → reduzir nota
+        PENALIZAÇÕES:
+        - Texto com apenas 1 parágrafo → C3 máximo 120
+        - Falta de progressão argumentativa → reduzir fortemente
+
+        ---
 
         C4 – Coesão:
-        - 200: excelente uso de conectivos e progressão
+        - 200: excelente uso de conectivos
         - 160: bom, com pequenas falhas
         - 120: repetição ou pouca variedade
-        - 80 ou menos: falhas graves de conexão
+        - 80 ou menos: falhas graves
 
-        Penalizações:
-        - Falta de paragrafação → reduzir no mínimo 40 pontos
+        PENALIZAÇÕES:
+        - Texto com apenas 1 parágrafo → C4 máximo 120
+        - Pouca variedade de conectivos → reduzir nota
 
-        C5 – Intervenção:
-        A proposta DEVE conter:
+        ---
+
+        C5 – Proposta de intervenção:
+
+        DEVE conter obrigatoriamente:
         - agente
         - ação
         - meio
@@ -269,11 +297,21 @@ async function correctEssayWithAI(userId, essayId) {
         Notas:
         - 200: completa com todos os elementos
         - 160: falta 1 elemento
-        - 120: genérica e pouco detalhada
+        - 120: genérica
         - 80 ou menos: incompleta ou ausente
 
-        Penalização obrigatória:
+        PENALIZAÇÕES OBRIGATÓRIAS:
         - Proposta genérica (“políticas públicas”) → máximo 120
+        - Sem agente claro → máximo 120
+        - Sem detalhamento → máximo 100
+
+        ---
+
+        REGRAS ESTRUTURAIS IMPORTANTES:
+
+        - Redação deve ter introdução, desenvolvimento e conclusão
+        - Pouco desenvolvimento → reduzir C2 e C3
+        - Texto curto → prejudica TODAS as competências
 
         ---
 
@@ -282,16 +320,32 @@ async function correctEssayWithAI(userId, essayId) {
         - explique de forma objetiva
         - cite trechos do texto
 
-        Depois:
-        - calcule a nota total (0–1000)
-        - faça um feedback geral detalhado e crítico
+        ---
+
+        Após avaliar:
+
+        1. Some todas as competências (0 a 1000)
+
+        2. APLIQUE AS TRAVAS OBRIGATÓRIAS:
+        - limite de linhas
+        - limite por ausência de repertório
+        - limite por estrutura
+
+        3. Se a nota ultrapassar o limite permitido, REDUZA obrigatoriamente
 
         ---
 
-        Título:
+        Depois:
+        - informe a nota final
+        - faça um feedback geral CRÍTICO e detalhado
+        - NÃO elogie sem justificativa
+
+        ---
+
+        TÍTULO:
         ${essay.title}
 
-        Texto:
+        TEXTO:
         ${essay.content}
 
         ---
@@ -312,13 +366,8 @@ async function correctEssayWithAI(userId, essayId) {
         "total": number,
         "generalFeedback": string
         }
-
-        Regras:
-        - Seja rigoroso
-        - Penalize erros
-        - NÃO seja generoso
-        - NÃO invente qualidades
         `;
+        
     const responseText = await generateWithOpenAI(prompt);
 
     let aiResult;
