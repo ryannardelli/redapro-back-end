@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 require("dotenv").config();
 
 const app = require("./app");
@@ -8,6 +9,12 @@ const sequelize = require("./config/database");
 const seedProfiles = require("./seeds/profile.seed");
 const seedProfileMenus = require("./seeds/seedProfileMenus");
 const seedMenus = require("./seeds/seedMenus");
+
+if (!global.crypto) {
+  global.crypto = crypto.webcrypto;
+}
+
+global.crypto.randomUUID ??= crypto.randomUUID;
 
 const PORT = process.env.PORT || 8080;
 

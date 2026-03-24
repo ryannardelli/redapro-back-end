@@ -1,6 +1,8 @@
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
@@ -8,10 +10,15 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     port: 5432,
-    dialect: 'postgres',
-    dialectOptions: {
-      ssl: false,
-    },
+    dialect: "postgres",
+    dialectOptions: isProduction
+      ? {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false,
+          },
+        }
+      : {},
     logging: false,
   }
 );
