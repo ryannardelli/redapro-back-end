@@ -144,13 +144,21 @@ async function correctWithAI(req, res, next) {
             message: "Sua redação foi corrigida pela IA."
         });
 
-       io.to(`user_${essay.userId}`).emit("essay:status", {
+        io.to(`user_${essay.userId}`).emit("essay:status", {
             id: essay.id,
             status: essay.status,
             note: essay.note,
-            feedback: essay.feedback,
-            message: "Sua redação foi corrigida pela IA."
-        });
+            feedback: {
+                c1: essay.c1,
+                c2: essay.c2,
+                c3: essay.c3,
+                c4: essay.c4,
+                c5: essay.c5,
+                general: essay.generalFeedback
+            },
+            message: "Sua redação foi corrigida pela IA.",
+            generalFeedback: essay.generalFeedback,
+            });
 
     } catch (err) {
         next(err);
