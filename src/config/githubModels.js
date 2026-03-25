@@ -1,11 +1,29 @@
+// require("dotenv").config();
+
+// const ModelClient = require("@azure-rest/ai-inference").default;
+// const { AzureKeyCredential } = require("@azure/core-auth");
+
+// const githubModels = ModelClient(
+//   "https://models.github.ai/inference",
+//   new AzureKeyCredential(process.env.TOKEN_GITHUB)
+// );
+
+// module.exports = githubModels;
+
 require("dotenv").config();
 
 const ModelClient = require("@azure-rest/ai-inference").default;
-const { AzureKeyCredential } = require("@azure/core-auth");;
+const { AzureKeyCredential } = require("@azure/core-auth");
 
-const githubModels = ModelClient(
-  "https://models.github.ai/inference",
-  new AzureKeyCredential(process.env.TOKEN_GITHUB)
-);
+function createGithubModels() {
+  if (!process.env.TOKEN_GITHUB) {
+    throw new Error("TOKEN_GITHUB is missing");
+  }
 
-module.exports = githubModels;
+  return ModelClient(
+    "https://models.github.ai/inference",
+    new AzureKeyCredential(process.env.TOKEN_GITHUB)
+  );
+}
+
+module.exports = createGithubModels;
