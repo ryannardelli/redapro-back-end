@@ -2,7 +2,7 @@ const { toMenuDto } = require('../dtos/menu/toMenuDto');
 const { toUpdateDto } = require('../dtos/menu/toUpdateDto');
 const menuService = require('../services/menuService');
 
-async function findAll(req, res, next) {
+async function findAll(_req, res, next) {
     try {
         const menu = await menuService.getAllMenu();
         const menuDto = menu.map(toMenuDto);
@@ -17,15 +17,6 @@ async function findById(req, res, next) {
         const { id } = req.params;
         const menu = await menuService.getMenuById(id);
         res.status(200).json(toMenuDto(menu));
-    } catch(err) {
-        next(err);
-    }
-}
-
-async function create(req, res, next) {
-    try {
-        await menuService.createMenu(req.body);
-        res.status(201).json({ message: "Menu criado com sucesso!" });
     } catch(err) {
         next(err);
     }
@@ -56,4 +47,4 @@ async function remove(req, res, next) {
     }
 }
 
-module.exports = { findAll, findById, update, remove, create };
+module.exports = { findAll, findById, update, remove };

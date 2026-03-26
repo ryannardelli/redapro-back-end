@@ -48,48 +48,6 @@ router.get("/:id", checkToken, menuController.findById);
 
 /**
  * @swagger
- * /menu:
- *   post:
- *     summary: Cria um novo menu
- *     tags: [Menu]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - route
- *               - icon
- *             properties:
- *               name:
- *                 type: string
- *                 example: Usuários
- *               route:
- *                 type: string
- *                 example: /usuarios
- *               icon:
- *                 type: string
- *                 example: users
- *     responses:
- *       201:
- *         description: Menu criado com sucesso
- *       400:
- *         description: Dados inválidos
- *       401:
- *         description: Token não fornecido ou inválido
- *       403:
- *         description: Acesso negado (usuário sem permissão)
- *       409:
- *         description: Rota já cadastrada
- */
-router.post("/", checkToken, authorize(["admin"]), menuController.create);
-
-/**
- * @swagger
  * /menu/{id}:
  *   put:
  *     summary: Atualiza um menu
