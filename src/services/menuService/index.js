@@ -14,11 +14,10 @@ async function getMenuById(id) {
 
 async function updateMenu(updateDto) {
     const { id, ...updateData } = updateDto;
-    const exists = await menuRepository.findByRoute(updateDto.route);
+
     const menu = await menuRepository.findById(id);
 
-    if(!menu) throw new MenuNotFoundError();
-    if(exists) throw new RouteAlreadyExistsError();
+    if (!menu) throw new MenuNotFoundError();
 
     await menu.update(updateData);
     return menu.get({ plain: true });
