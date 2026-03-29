@@ -71,15 +71,9 @@ router.get("/:id", checkToken, menuController.findById);
  *               name:
  *                 type: string
  *                 example: Usuários
- *               route:
- *                 type: string
- *                 example: /usuarios
  *               icon:
  *                 type: string
  *                 example: users
- *               active:
- *                 type: boolean
- *                 example: true
  *     responses:
  *       200:
  *         description: Menu atualizado com sucesso
