@@ -1,3 +1,51 @@
+# # name: CI Pipeline
+
+# # on:
+# #   push:
+# #     branches: [ main ]
+# #   pull_request:
+# #     branches: [ main ]
+# # jobs:
+# #   build-and-test:
+# #     runs-on: ubuntu-latest
+
+# #     services:
+# #       postgres:
+# #         image: postgres:15
+# #         env:
+# #           POSTGRES_USER: postgres
+# #           POSTGRES_PASSWORD: password
+# #           POSTGRES_DB: redapro
+# #         ports:
+# #           - 5432:5432
+# #         options: >-
+# #           --health-cmd="pg_isready -U postgres"
+# #           --health-interval=10s
+# #           --health-timeout=5s
+# #           --health-retries=5
+# #     env:
+# #       DB_HOST: localhost
+# #       DB_PORT: ${{ secrets.DB_PORT }}
+# #       DB_USER: ${{ secrets.DB_USER }}
+# #       DB_PASS: ${{ secrets.DB_PASS }}
+# #       DB_NAME: ${{ secrets.DB_NAME }}
+# #       PORT: ${{ secrets.PORT }}
+
+# #       SECRET: ${{ secrets.SECRET }}
+# #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# #     steps:
+# #       - uses: actions/checkout@v4
+# #       - uses: actions/setup-node@v4
+# #         with:
+# #           node-version: 22
+
+# #       - name: Instalar dependências
+# #         run: npm install
+
+# #       - name: Rodar testes
+# #         run: npm test
+
 # name: CI Pipeline
 
 # on:
@@ -5,8 +53,10 @@
 #     branches: [ main ]
 #   pull_request:
 #     branches: [ main ]
+
 # jobs:
 #   build-and-test:
+#     name: Build & Test
 #     runs-on: ubuntu-latest
 
 #     services:
@@ -23,82 +73,32 @@
 #           --health-interval=10s
 #           --health-timeout=5s
 #           --health-retries=5
+
 #     env:
 #       DB_HOST: localhost
-#       DB_PORT: ${{ secrets.DB_PORT }}
-#       DB_USER: ${{ secrets.DB_USER }}
-#       DB_PASS: ${{ secrets.DB_PASS }}
-#       DB_NAME: ${{ secrets.DB_NAME }}
-#       PORT: ${{ secrets.PORT }}
-
+#       DB_PORT: 5432
+#       DB_USER: postgres
+#       DB_PASSWORD: password
+#       DB_NAME: redapro
 #       SECRET: ${{ secrets.SECRET }}
 #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 #     steps:
-#       - uses: actions/checkout@v4
-#       - uses: actions/setup-node@v4
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
 #         with:
 #           node-version: 22
 
-#       - name: Instalar dependências
-#         run: npm install
+#       - name: Install dependencies
+#         run: npm ci
 
-#       - name: Rodar testes
-#         run: npm test
+#       - name: Wait for Postgres
+#         run: |
+#           echo "Aguardando Postgres iniciar..."
+#           sleep 10
 
-name: CI Pipeline
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  build-and-test:
-    name: Build & Test
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: redapro
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
-    env:
-      DB_HOST: localhost
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: password
-      DB_NAME: redapro
-      SECRET: ${{ secrets.SECRET }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Wait for Postgres
-        run: |
-          echo "Aguardando Postgres iniciar..."
-          sleep 10
-
-      - name: Run tests
-        run: npm test -- --ci --runInBand
+#       - name: Run tests
+#         run: npm test -- --ci --runInBand
