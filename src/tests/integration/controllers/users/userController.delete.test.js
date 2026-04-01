@@ -1,3 +1,6 @@
+const dotenv = require('dotenv');
+dotenv.config({ path: '.env.dev' });
+
 const request = require('supertest');
 const app = require('../../../../app');
 const userService = require('../../../../services/userService');
@@ -37,23 +40,22 @@ describe('DELETE /users/:id', () => {
   });
 
   it('deve retornar 403 se o usuário não for admin ao deletar', async () => {
-  const token = jwt.sign(
-    { id: 2, role: 'student' },
-    process.env.SECRET,
-    { expiresIn: '1h' }
-  );
+    const studentToken = jwt.sign(
+      { id: 2, role: 'student' },
+      process.env.SECRET,
+      { expiresIn: '1h' }
+    );
 
-  const res = await request(app)
-    .delete('/users/1')
-    .set('Authorization', `Bearer ${token}`);
+    const res = await request(app)
+      .delete('/users/1')
+      .set('Authorization', `Bearer ${studentToken}`);
 
-  expect(res.status).toBe(403);
-  expect(res.body).toHaveProperty(
-    'message',
-    'Acesso negado. Você não tem permissão suficiente para acessar esse recurso.'
-  );
-});
-
+    expect(res.status).toBe(403);
+    expect(res.body).toHaveProperty(
+      'message',
+      'Acesso negado. Você não tem permissão suficiente para acessar esse recurso.'
+    );
+  });
 
   it('deve retornar erro se token não for fornecido', async () => {
     const res = await request(app).delete('/users/1');
