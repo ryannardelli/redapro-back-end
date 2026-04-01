@@ -1,4 +1,7 @@
-const request = require('supertest');
+const dotenv = require('dotenv');
+dotenv.config({ path: '.env.dev' });
+
+const request = require('supertest'); 
 const app = require('../../../../app');
 const profileService = require('../../../../services/profileService');
 const jwt = require('jsonwebtoken');
@@ -23,20 +26,25 @@ describe('GET /profile/findAll', () => {
             { id: 1, name: "Administrador" },
             { id: 2, name: "Estudante" },
             { id: 3, name: "Corretor" },
-    ]);
-        const res = await request(app).get('/profile/findAll').set('Authorization', `Bearer ${token}`);
+        ]);
+
+        const res = await request(app)
+            .get('/profile/findAll')
+            .set('Authorization', `Bearer ${token}`);
 
         expect(res.status).toBe(200);
         expect(res.body.length).toBe(3);
         expect(res.body[0]).toHaveProperty('name', 'Administrador');
     });
 
-    it('deve retornar um array vazio', async() => {
+    it('deve retornar um array vazio', async () => {
         profileService.getAllProfile.mockResolvedValue([]);
 
-        const res = await request(app).get('/profile/findAll').set('Authorization', `Bearer ${token}`);
+        const res = await request(app)
+            .get('/profile/findAll')
+            .set('Authorization', `Bearer ${token}`);
 
         expect(res.status).toBe(200);
         expect(res.body).toEqual([]);
-    })
+    });
 });
