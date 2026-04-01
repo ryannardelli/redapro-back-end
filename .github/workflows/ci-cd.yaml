@@ -64,7 +64,7 @@ jobs:
       - name: Deploy to Supabase
         run: |
           echo "Logando no Supabase CLI..."
-          npx supabase login --service-role $SUPABASE_KEY
+          npx supabase login --token $SUPABASE_KEY
 
           echo "Deploy da aplicação..."
           npx supabase deploy
