@@ -66,5 +66,5 @@ jobs:
           echo "Logando no Supabase CLI..."
           npx supabase login --token $SUPABASE_KEY
 
-          echo "Deploy da aplicação..."
-          npx supabase deploy
+          echo "Aplicando alterações no banco de dados..."
+          npx supabase db push
