@@ -35,6 +35,7 @@ jobs:
       SECRET: ${{ secrets.SECRET }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_REF: ${{ secrets.SUPABASE_REF }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       DB_SSL: ${{ secrets.DB_SSL }}
 
