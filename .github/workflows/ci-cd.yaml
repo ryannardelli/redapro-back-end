@@ -60,11 +60,13 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t redapro-backend:${{ github.sha }} .
+      
+      - name: Link Supabase project
+        run: |
+          echo "Linkando projeto Supabase..."
+          npx supabase link --project-ref $SUPABASE_REF --access-token $SUPABASE_KEY
 
       - name: Deploy to Supabase
         run: |
-          echo "Logando no Supabase CLI..."
-          npx supabase login --token $SUPABASE_KEY
-
           echo "Aplicando alterações no banco de dados..."
           npx supabase db push
