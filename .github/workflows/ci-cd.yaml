@@ -1,3 +1,82 @@
+# name: CI/CD Pipeline
+
+# on:
+#   push:
+#     branches: [ main ]
+#   pull_request:
+#     branches: [ main ]
+
+# jobs:
+#   build-test-deploy:
+#     name: Build, Test & Deploy
+#     runs-on: ubuntu-latest
+
+#     services:
+#       postgres:
+#         image: postgres:15
+#         env:
+#           POSTGRES_USER: postgres
+#           POSTGRES_PASSWORD: password
+#           POSTGRES_DB: redapro
+#         ports:
+#           - 5432:5432
+#         options: >-
+#           --health-cmd="pg_isready -U postgres"
+#           --health-interval=10s
+#           --health-timeout=5s
+#           --health-retries=5
+
+#     env:
+#       DB_HOST: localhost
+#       DB_PORT: 5432
+#       DB_USER: postgres
+#       DB_PASSWORD: password
+#       DB_NAME: redapro
+#       SECRET: ${{ secrets.SECRET }}
+#       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+#       SUPABASE_REF: ${{ secrets.SUPABASE_REF }}
+#       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+#       DB_SSL: ${{ secrets.DB_SSL }}
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 22
+
+#       - name: Install dependencies
+#         run: npm ci
+
+#       - name: Wait for Postgres
+#         run: |
+#           echo "Aguardando Postgres iniciar..."
+#           sleep 10
+
+#       - name: Run tests
+#         run: npm test -- --ci --runInBand
+
+#       - name: Build Docker image
+#         run: docker build -t redapro-backend:${{ github.sha }} .
+      
+#       - name: Log in Supabase CLI
+#         run: |
+#           echo "Logando no Supabase CLI..."
+#           npx supabase login --token $SUPABASE_KEY
+
+#       - name: Link Supabase project
+#         run: |
+#           echo "Linkando projeto Supabase..."
+#           npx supabase link --project-ref $SUPABASE_REF
+
+#       - name: Aplicar alterações no banco de dados
+#         run: |
+#           echo "Aplicando alterações no banco de dados..."
+#           npx supabase db push
+
 name: CI/CD Pipeline
 
 on:
@@ -30,14 +109,14 @@ jobs:
       DB_HOST: localhost
       DB_PORT: 5432
       DB_USER: postgres
-      DB_PASSWORD: password
+      DB_PASSWORD: password 
       DB_NAME: redapro
       SECRET: ${{ secrets.SECRET }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      
       SUPABASE_REF: ${{ secrets.SUPABASE_REF }}
-      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-      DB_SSL: ${{ secrets.DB_SSL }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -52,27 +131,20 @@ jobs:
         run: npm ci
 
       - name: Wait for Postgres
-        run: |
-          echo "Aguardando Postgres iniciar..."
-          sleep 10
+        run: sleep 10
 
       - name: Run tests
         run: npm test -- --ci --runInBand
 
       - name: Build Docker image
         run: docker build -t redapro-backend:${{ github.sha }} .
-      
-      - name: Log in Supabase CLI
-        run: |
-          echo "Logando no Supabase CLI..."
-          npx supabase login --token $SUPABASE_KEY
 
-      - name: Link Supabase project
+      - name: Link e Push Supabase
         run: |
-          echo "Linkando projeto Supabase..."
-          npx supabase link --project-ref $SUPABASE_REF
-
-      - name: Aplicar alterações no banco de dados
-        run: |
-          echo "Aplicando alterações no banco de dados..."
-          npx supabase db push
+          echo "Conectando ao projeto Supabase..."
+          npx supabase link --project-ref "$SUPABASE_REF" --password "$SUPABASE_DB_PASSWORD"
+          
+          echo "Enviando migrações para o banco remoto..."
+          npx supabase db push --password "$SUPABASE_DB_PASSWORD"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
