@@ -39,3 +39,4 @@ const { isUnexpected } = require("@azure-rest/ai-inference");
     }
   }
 })();
+
