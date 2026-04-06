@@ -142,4 +142,4 @@ jobs:
           npx supabase link --project-ref "$SUPABASE_REF"
 
           echo "Enviando migrações usando o Pooler (IPv4)..."
-          npx supabase db push --db-url "postgresql://postgres:${SUPABASE_PASSWORD}@db.cnfdztwwhxmkzymuvutw.supabase.co:5432/postgres"
+          npx supabase db push --db-url "postgresql://postgres.${SUPABASE_REF}:${SUPABASE_PASSWORD}@aws-0-sa-east-1.pooler.supabase.com:6543/postgres"
