@@ -141,5 +141,5 @@ jobs:
           echo "Conectando ao projeto Supabase..."
           npx supabase link --project-ref "$SUPABASE_REF"
 
-          echo "Enviando migrações para o banco remoto..."
-          npx supabase db push
+          echo "Enviando migrações usando o Pooler (IPv4)..."
+          npx supabase db push --db-url "postgresql://postgres:${SUPABASE_PASSWORD}@db.cnfdztwwhxmkzymuvutw.supabase.co:5432/postgres"
