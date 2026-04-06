@@ -30,14 +30,14 @@
 #       DB_HOST: localhost
 #       DB_PORT: 5432
 #       DB_USER: postgres
-#       DB_PASSWORD: password
+#       DB_PASSWORD: password 
 #       DB_NAME: redapro
 #       SECRET: ${{ secrets.SECRET }}
-#       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+#       TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }}
+      
 #       SUPABASE_REF: ${{ secrets.SUPABASE_REF }}
-#       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-#       DB_SSL: ${{ secrets.DB_SSL }}
+#       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+#       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
 #     steps:
 #       - name: Checkout repository
@@ -52,30 +52,23 @@
 #         run: npm ci
 
 #       - name: Wait for Postgres
-#         run: |
-#           echo "Aguardando Postgres iniciar..."
-#           sleep 10
+#         run: sleep 10
 
 #       - name: Run tests
 #         run: npm test -- --ci --runInBand
 
 #       - name: Build Docker image
 #         run: docker build -t redapro-backend:${{ github.sha }} .
-      
-#       - name: Log in Supabase CLI
-#         run: |
-#           echo "Logando no Supabase CLI..."
-#           npx supabase login --token $SUPABASE_KEY
 
-#       - name: Link Supabase project
+#       - name: Link e Push Supabase
 #         run: |
-#           echo "Linkando projeto Supabase..."
-#           npx supabase link --project-ref $SUPABASE_REF
-
-#       - name: Aplicar alterações no banco de dados
-#         run: |
-#           echo "Aplicando alterações no banco de dados..."
-#           npx supabase db push
+#           echo "Conectando ao projeto Supabase..."
+#           npx supabase link --project-ref "$SUPABASE_REF" --password "$SUPABASE_DB_PASSWORD"
+          
+#           echo "Enviando migrações para o banco remoto..."
+#           npx supabase db push --password "$SUPABASE_DB_PASSWORD"
+#         env:
+#           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
 name: CI/CD Pipeline
 
@@ -139,12 +132,13 @@ jobs:
       - name: Build Docker image
         run: docker build -t redapro-backend:${{ github.sha }} .
 
+      - name: Login no Supabase
+        run: npx supabase login --token $SUPABASE_ACCESS_TOKEN
+
       - name: Link e Push Supabase
         run: |
           echo "Conectando ao projeto Supabase..."
-          npx supabase link --project-ref "$SUPABASE_REF" --password "$SUPABASE_DB_PASSWORD"
-          
+          npx supabase link --project-ref "$SUPABASE_REF"
+
           echo "Enviando migrações para o banco remoto..."
-          npx supabase db push --password "$SUPABASE_DB_PASSWORD"
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          npx supabase db push
