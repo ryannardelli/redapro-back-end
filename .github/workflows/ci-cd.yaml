@@ -109,7 +109,7 @@ jobs:
       TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }}
       
       SUPABASE_REF: ${{ secrets.SUPABASE_REF }}
-      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
     steps:
