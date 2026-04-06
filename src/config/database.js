@@ -3,12 +3,12 @@ const dotenv = require("dotenv");
 
 const env = process.env.NODE_ENV || "development";
 
-const envFile =
-  env === "production"
-    ? ".env.production"
-    : ".env.dev";
+// const envFile =
+//   env === "production"
+//     ? ".env.production"
+//     : ".env.dev";
 
-dotenv.config({ path: envFile });
+dotenv.config();
 
 let sequelize;
 
