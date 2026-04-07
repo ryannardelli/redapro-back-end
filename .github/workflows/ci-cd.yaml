@@ -288,7 +288,10 @@ jobs:
       - name: Login no Supabase
         run: npx supabase login --token $SUPABASE_ACCESS_TOKEN
 
-      - name: Link e Push Supabase
+      - name: Login no Supabase
+        run: npx supabase login --token $SUPABASE_ACCESS_TOKEN
+
+      - name: Link e Push
         run: |
           rm -rf supabase/.temp
           npx supabase link --project-ref "$SUPABASE_REF"
