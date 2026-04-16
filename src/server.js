@@ -1,0 +1,125 @@
+const dns = require("dns");
+dns.setDefaultResultOrder("ipv4first");
+const os = require("os");
+
+const crypto = require("crypto");
+
+if (!process.env.DB_HOST) {
+  require("dotenv").config();
+}
+
+const app = require("./app");
+const http = require("http");
+const setupSocket = require("./config/socket");
+const sequelize = require("./config/database");
+
+const seedProfiles = require("./seeds/profile.seed");
+const seedProfileMenus = require("./seeds/seedProfileMenus");
+const seedMenus = require("./seeds/seedMenus");
+
+if (!global.crypto) {
+  global.crypto = crypto.webcrypto;
+}
+
+global.crypto.randomUUID ??= crypto.randomUUID;
+
+const PORT = process.env.PORT || 3000;
+
+const server = http.createServer(app);
+
+setupSocket(server, app);
+
+if (process.env.NODE_ENV !== "test") {
+  server.listen(PORT, "0.0.0.0", () => {
+    const networkInterfaces = os.networkInterfaces();
+
+    let localIP = "localhost";
+
+    for (const interfaceName in networkInterfaces) {
+      for (const net of networkInterfaces[interfaceName]) {
+        if (net.family === "IPv4" && !net.internal) {
+          localIP = net.address;
+        }
+      }
+    }
+
+    console.log(`
+      Servidor rodando com sucesso!
+
+      Local:   http://localhost:${PORT}
+      Swagger:   http://localhost:${PORT}/api-docs
+      Rede:    http://${localIP}:${PORT}
+`);
+  });
+}
+
+async function connectDB() {
+  try {
+    await sequelize.authenticate();
+    console.log("Conectado ao banco PostgreSQL com sucesso!");
+
+    const User = require("./models/User");
+    const Profile = require("./models/Profile");
+    const Menu = require("./models/Menu");
+    const ProfileMenu = require("./models/ProfileMenu");
+    const Essay = require("./models/Essay");
+    const Category = require("./models/Category");
+    const ReferenceEssay = require("./models/ReferenceEssay");
+
+    Profile.hasMany(User, { foreignKey: "profileId" });
+    User.belongsTo(Profile, { foreignKey: "profileId" });
+
+    User.hasMany(Essay, { foreignKey: "userId", as: "essay" });
+    Essay.belongsTo(User, { foreignKey: "userId", as: "user" });
+
+    Category.hasMany(Essay, { foreignKey: "categoryId", as: "essay" });
+    Essay.belongsTo(Category, { foreignKey: "categoryId", as: "category" });
+
+    Category.hasMany(ReferenceEssay, {
+      foreignKey: "categoryId",
+      as: "referenceEssay",
+    });
+
+    ReferenceEssay.belongsTo(Category, {
+      foreignKey: "categoryId",
+      as: "category",
+    });
+
+    Profile.belongsToMany(Menu, {
+      through: ProfileMenu,
+      foreignKey: "profileId",
+    });
+
+    Menu.belongsToMany(Profile, {
+      through: ProfileMenu,
+      foreignKey: "menuId",
+    });
+
+    await sequelize.sync();
+    console.log("Tabelas sincronizadas com sucesso!");
+
+    const profilesCount = await Profile.count();
+
+    if (profilesCount === 0) {
+      console.log("Executando seeds iniciais...");
+
+      try {
+        await seedProfiles();
+        await seedMenus();
+        await seedProfileMenus();
+
+        console.log("Seeds executados com sucesso!");
+      } catch (seedError) {
+        console.error("Erro ao executar seeds:", seedError);
+      }
+    }
+
+  } catch (error) {
+    console.error("Erro ao conectar com o banco:", error);
+
+  }
+}
+
+if (process.env.NODE_ENV !== "test") {
+  connectDB();
+}
