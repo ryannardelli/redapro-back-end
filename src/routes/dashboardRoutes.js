@@ -169,7 +169,7 @@ router.get(
 
 /**
  * @swagger
- * /dashboard/reviewer/reviewer-activity:
+ * /dashboard/reviewer-activity:
  *   get:
  *     summary: Retorna as últimas redações corrigidas pelo corretor
  *     description: >
