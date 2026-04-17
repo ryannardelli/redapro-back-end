@@ -405,7 +405,6 @@ async function correctEssayWithAI(userId, essayId) {
 
   } catch (error) {
 
-    // volta o status se a IA falhar
     essay.status = "PENDENTE";
     await essay.save();
 

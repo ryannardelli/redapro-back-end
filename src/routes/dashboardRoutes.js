@@ -116,4 +116,128 @@ router.get(
   dashboardController.getRecentEssays
 );
 
+/**
+ * @swagger
+ * /dashboard/reviewer/stats:
+ *   get:
+ *     summary: Retorna estatísticas do dashboard do corretor
+ *     description: >
+ *       Retorna métricas gerais de performance do corretor, incluindo
+ *       total de redações corrigidas, quantidade pendente de correção,
+ *       total já corrigidas, média das notas atribuídas e data da última correção.
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Estatísticas do corretor retornadas com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalReviewed:
+ *                   type: integer
+ *                   example: 42
+ *                   description: Total de redações corrigidas pelo corretor
+ *                 pending:
+ *                   type: integer
+ *                   example: 10
+ *                   description: Total de redações aguardando correção
+ *                 corrected:
+ *                   type: integer
+ *                   example: 32
+ *                   description: Total de redações já corrigidas
+ *                 averageScore:
+ *                   type: number
+ *                   example: 785
+ *                   description: Média das notas atribuídas pelo corretor
+ *                 lastReviewed:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2026-04-10T14:20:00.000Z"
+ *                   description: Data da última correção realizada
+ *       401:
+ *         description: Token inválido ou ausente
+ */
+
+router.get(
+  "/reviewer/stats",
+  checkToken,
+  dashboardController.getReviewerStats
+);
+
+/**
+ * @swagger
+ * /dashboard/reviewer/reviewer-activity:
+ *   get:
+ *     summary: Retorna as últimas redações corrigidas pelo corretor
+ *     description: >
+ *       Retorna as redações mais recentes que foram corrigidas pelo corretor autenticado.
+ *       Usado para exibir o histórico de atividade no dashboard do corretor.
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de redações corrigidas retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 21
+ *                     description: ID da redação
+ *                   title:
+ *                     type: string
+ *                     example: "Impactos da tecnologia na educação"
+ *                   status:
+ *                     type: string
+ *                     example: "CORRIGIDA"
+ *                   note:
+ *                     type: number
+ *                     example: 800
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2026-04-01T10:00:00.000Z"
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2026-04-02T12:00:00.000Z"
+ *                   user:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 5
+ *                       name:
+ *                         type: string
+ *                         example: "João Silva"
+ *                       email:
+ *                         type: string
+ *                         example: "joao@email.com"
+ *                   category:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 2
+ *                       name:
+ *                         type: string
+ *                         example: "Tecnologia"
+ *       401:
+ *         description: Token inválido ou não enviado
+ */
+
+router.get(
+  "/reviewer-activity",
+  checkToken,
+  dashboardController.getRecentReviewedEssays
+);
+
 module.exports = router;

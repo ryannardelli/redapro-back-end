@@ -95,7 +95,49 @@ module.exports = {
     });
   },
 
-  
+   countByReviewer(reviewerId) {
+    return Essay.count({
+      where: { reviewerId }
+    });
+  },
+
+    countByReviewerAndStatus(reviewerId, status) {
+    return Essay.count({
+      where: {
+        reviewerId,
+        status
+      }
+    });
+  },
+
+  averageScoreByReviewer(reviewerId) {
+    return Essay.findOne({
+      attributes: [[fn("AVG", col("note")), "avgScore"]],
+      where: {
+        reviewerId,
+        status: "CORRIGIDA"
+      },
+      raw: true
+    });
+  },
+
+  lastEssayByReviewer(reviewerId) {
+    return Essay.findOne({
+      where: { reviewerId },
+      order: [["updatedAt", "DESC"]],
+      attributes: ["updatedAt"]
+    });
+  },
+
+  findRecentByReviewer(reviewerId, limit = 5) {
+    return Essay.findAll({
+      where: { reviewerId },
+      order: [["updatedAt", "DESC"]],
+      limit,
+      include: ["category", "user"]
+    });
+  },
+
     create: (data) => Essay.create(data),
     update: (essay, data) => essay.update(data),
     delete: (essay) => essay.destroy(),
