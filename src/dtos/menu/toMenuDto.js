@@ -4,6 +4,7 @@ function toMenuDto(menu) {
         name: menu.name,
         route: menu.route,
         icon: menu.icon,
+        order: menu.order
     }
 }
 

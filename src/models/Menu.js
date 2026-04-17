@@ -58,6 +58,12 @@ const Menu = sequelize.define("Menu", {
                 msg: "O ícone é obrigatório."
             },
         }
+    },
+
+    order: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
     }
 });
 
