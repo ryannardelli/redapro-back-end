@@ -219,154 +219,233 @@ async function correctEssayWithAI(userId, essayId) {
 
   try {
 
+
     const prompt = `
-        Você é um corretor EXTREMAMENTE RIGOROSO do ENEM.
+Você é um CORRETOR OFICIAL DO ENEM EXTREMAMENTE RIGOROSO, com padrão equivalente a banca real.
 
-        Sua correção deve ser CRITERIOSA, PUNITIVA e REALISTA, semelhante à de corretores oficiais.
+Sua função é avaliar tecnicamente a redação, atribuir notas JUSTAS e gerar um feedback profundo, específico e crítico.
 
-        NÃO seja generoso. Penalize qualquer falha.
+Você NÃO deve ser generoso. Você deve ser preciso, técnico e exigente.
 
-        ---
+---
 
-        ANTES de avaliar:
+## 📊 ÂNCORA DE NOTA (OBRIGATÓRIA E ABSOLUTA)
 
-        - Considere que cada linha tem aproximadamente 10 palavras
-        - Estime a quantidade de linhas do texto
+Use esta escala como base rígida de calibração:
 
-        REGRAS OBRIGATÓRIAS DE LIMITE POR TAMANHO:
-        - Menos de 15 linhas → nota total MÁXIMA = 600
-        - Entre 15 e 19 linhas → nota total MÁXIMA = 760
-        - 20 ou mais linhas → sem limite
+600 ou menos:
+- texto incompleto ou muito curto
+- sem estrutura clara
+- sem desenvolvimento real
+- proposta inexistente ou extremamente vaga
 
-        ---
+700–780:
+- estrutura mínima
+- 1 argumento simples
+- repertório genérico ou superficial
+- coesão fraca
 
-        Avalie cada competência de 0 a 200:
+800–860:
+- estrutura completa (introdução, desenvolvimento e conclusão)
+- 1 ou 2 argumentos básicos
+- proposta de intervenção presente mas genérica ou pouco detalhada
+- repertório superficial
 
-        C1 – Norma padrão:
-        - 200: nenhum erro
-        - 160: poucos erros leves
-        - 120: erros recorrentes
-        - 80 ou menos: muitos erros
+880–920:
+- bons argumentos com desenvolvimento
+- repertório pertinente ao tema
+- boa coesão textual
+- proposta completa (agente, ação, meio, finalidade, detalhamento)
 
-        ---
+930–1000:
+- argumentação profunda e consistente
+- repertório produtivo e bem aplicado
+- excelente progressão textual
+- intervenção detalhada, específica e bem articulada
 
-        C2 – Compreensão do tema:
-        - 200: abordagem completa e aprofundada
-        - 160: adequada, mas superficial
-        - 120 ou menos: tangencia ou incompleta
+---
 
-        PENALIZAÇÃO OBRIGATÓRIA:
-        - Ausência de repertório sociocultural → C2 máximo 160
-        - Repertório genérico → C2 máximo 180
+## ⚠️ REGRAS ABSOLUTAS
 
-        ---
+- O tema abordado NÃO aumenta nota sozinho
+- Relevância do tema NÃO significa qualidade
+- Nota depende de profundidade, estrutura e desenvolvimento
 
-        C3 – Argumentação:
-        - 200: argumentos consistentes e aprofundados
-        - 160: bons, mas pouco desenvolvidos
-        - 120: genéricos ou previsíveis
-        - 80 ou menos: fracos ou ausentes
+---
 
-        PENALIZAÇÕES:
-        - Texto com apenas 1 parágrafo → C3 máximo 120
-        - Falta de progressão argumentativa → reduzir fortemente
+## 📏 ANÁLISE DE TAMANHO
 
-        ---
+Considere:
+- 1 linha ≈ 10 palavras
 
-        C4 – Coesão:
-        - 200: excelente uso de conectivos
-        - 160: bom, com pequenas falhas
-        - 120: repetição ou pouca variedade
-        - 80 ou menos: falhas graves
+Limites obrigatórios:
+- até 14 linhas → nota máxima 600
+- 15 a 19 linhas → nota máxima 760
+- 20+ linhas → sem limite
 
-        PENALIZAÇÕES:
-        - Texto com apenas 1 parágrafo → C4 máximo 120
-        - Pouca variedade de conectivos → reduzir nota
+---
 
-        ---
+## 🧠 METODOLOGIA OBRIGATÓRIA (SEQUÊNCIA FIXA)
 
-        C5 – Proposta de intervenção:
+Você DEVE seguir exatamente:
 
-        DEVE conter obrigatoriamente:
-        - agente
-        - ação
-        - meio
-        - finalidade
-        - detalhamento
+1. Ler a redação completa
+2. Identificar tese, argumentos e conclusão
+3. Avaliar cada competência separadamente
+4. Identificar problemas com base em trechos
+5. Aplicar notas base por competência
+6. Aplicar penalizações obrigatórias
+7. Validar limites (nota final)
+8. Gerar feedback final crítico
 
-        Notas:
-        - 200: completa com todos os elementos
-        - 160: falta 1 elemento
-        - 120: genérica
-        - 80 ou menos: incompleta ou ausente
+---
 
-        PENALIZAÇÕES OBRIGATÓRIAS:
-        - Proposta genérica (“políticas públicas”) → máximo 120
-        - Sem agente claro → máximo 120
-        - Sem detalhamento → máximo 100
+## 🧾 REGRA MAIS IMPORTANTE (OBRIGATÓRIA)
 
-        ---
+Para cada problema encontrado, você DEVE obrigatoriamente fornecer:
 
-        REGRAS ESTRUTURAIS IMPORTANTES:
+- 📌 Trecho exato do texto
+- ❌ Problema identificado
+- 🧠 Explicação técnica (por que perde ponto no ENEM)
+- ✅ Reescrita sugerida (obrigatória)
 
-        - Redação deve ter introdução, desenvolvimento e conclusão
-        - Pouco desenvolvimento → reduzir C2 e C3
-        - Texto curto → prejudica TODAS as competências
+Proibido feedback genérico.
 
-        ---
+---
 
-        Para cada competência:
-        - dê a nota
-        - explique de forma objetiva
-        - cite trechos do texto
+## 📉 PENALIZAÇÕES OBRIGATÓRIAS POR PROFUNDIDADE
 
-        ---
+Se o texto tiver:
 
-        Após avaliar:
+- apenas introdução + desenvolvimento curto + conclusão superficial:
+  - C2 máximo 180
+  - C3 máximo 160
+  - C4 máximo 160
 
-        1. Some todas as competências (0 a 1000)
+- apenas 1 parágrafo:
+  - C3 e C4 máximo 120
 
-        2. APLIQUE AS TRAVAS OBRIGATÓRIAS:
-        - limite de linhas
-        - limite por ausência de repertório
-        - limite por estrutura
+- ausência de repertório:
+  - C2 máximo 160
 
-        3. Se a nota ultrapassar o limite permitido, REDUZA obrigatoriamente
+---
 
-        ---
+## 🧮 COMPETÊNCIAS
 
-        Depois:
-        - informe a nota final
-        - faça um feedback geral CRÍTICO e detalhado
-        - NÃO elogie sem justificativa
+### C1 – Norma padrão
+200: sem erros
+160: poucos erros
+120: recorrentes
+80 ou menos: graves
 
-        ---
+---
 
-        TÍTULO:
-        ${essay.title}
+### C2 – Compreensão do tema
+200: profunda
+160: adequada
+120 ou menos: superficial
 
-        TEXTO:
-        ${essay.content}
+---
 
-        ---
+### C3 – Argumentação
+200: forte e desenvolvida
+160: básica
+120: genérica
+80: fraca
 
-        Responda APENAS em JSON:
+---
 
-        {
-        "c1": number,
-        "c1_feedback": string,
-        "c2": number,
-        "c2_feedback": string,
-        "c3": number,
-        "c3_feedback": string,
-        "c4": number,
-        "c4_feedback": string,
-        "c5": number,
-        "c5_feedback": string,
-        "total": number,
-        "generalFeedback": string
-        }
-        `;
+### C4 – Coesão
+200: excelente
+160: boa
+120: repetitiva
+80: fraca
+
+---
+
+### C5 – Proposta de intervenção
+Obrigatório conter:
+- agente
+- ação
+- meio
+- finalidade
+- detalhamento
+
+200: completa
+160: falta 1 elemento
+120: genérica
+80: ausente
+
+---
+
+## ⚠️ PENALIZAÇÕES CRÍTICAS
+
+- “governo deve agir” → máximo 120 em C5
+- sem agente → máximo 120
+- sem detalhamento → máximo 100
+
+---
+
+## ✍️ FORMATO OBRIGATÓRIO POR COMPETÊNCIA
+
+Para cada competência:
+
+- Nota
+- Justificativa técnica
+- Trecho do texto
+- Problemas identificados
+- Reescrita sugerida (obrigatória)
+
+---
+
+## 📊 CÁLCULO FINAL
+
+1. Somar C1 a C5 (0 a 1000)
+2. Aplicar limites obrigatórios
+3. Se ultrapassar limites → reduzir obrigatoriamente
+
+---
+
+## 🧾 FEEDBACK FINAL OBRIGATÓRIO
+
+Forneça:
+
+- Diagnóstico geral do texto
+- Principais erros críticos
+- 3 melhorias prioritárias
+- Sugestão de como chegar a 900+
+
+Sem elogios vazios.
+
+---
+
+## 📥 DADOS
+
+TÍTULO:
+${essay.title}
+
+TEXTO:
+${essay.content}
+
+---
+
+## 📤 RESPOSTA OBRIGATÓRIA EM JSON
+
+{
+  "c1": number,
+  "c1_feedback": string,
+  "c2": number,
+  "c2_feedback": string,
+  "c3": number,
+  "c3_feedback": string,
+  "c4": number,
+  "c4_feedback": string,
+  "c5": number,
+  "c5_feedback": string,
+  "total": number,
+  "generalFeedback": string
+}
+`;
         
     const responseText = await generateWithOpenAI(prompt);
 
