@@ -21,6 +21,15 @@ module.exports = {
         ]
     }),
 
+     updatePassword: (userId, hashedPassword) => {
+        return User.update(
+        { password: hashedPassword },
+        {
+            where: { id: userId },
+        }
+        );
+    },
+
     findByEmail: (email) => User.findOne({ where: { email } }),
     countUsers: () => User.count(),
     create: (data) => User.create(data),
