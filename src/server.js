@@ -65,6 +65,7 @@ async function connectDB() {
     const Essay = require("./models/Essay");
     const Category = require("./models/Category");
     const ReferenceEssay = require("./models/ReferenceEssay");
+    const PasswordResetToken = require("./models/PasswordResetToken");
 
     Profile.hasMany(User, { foreignKey: "profileId" });
     User.belongsTo(Profile, { foreignKey: "profileId" });
@@ -93,6 +94,16 @@ async function connectDB() {
     Menu.belongsToMany(Profile, {
       through: ProfileMenu,
       foreignKey: "menuId",
+    });
+
+    User.hasMany(PasswordResetToken, {
+      foreignKey: "userId",
+      as: "passwordResetTokens"
+    });
+
+    PasswordResetToken.belongsTo(User, {
+      foreignKey: "userId",
+      as: "user"
     });
 
     await sequelize.sync();

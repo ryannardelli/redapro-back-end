@@ -20,6 +20,7 @@ module.exports = {
             }
         ]
     }),
+
     findByEmail: (email) => User.findOne({ where: { email } }),
     countUsers: () => User.count(),
     create: (data) => User.create(data),
