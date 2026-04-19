@@ -24,8 +24,6 @@ const { uploadImage } = require("../middleware/uploadImage");
  *         description: Lista de usuários retornada com sucesso
  */
 
-router.get("/findAll", checkToken, userController.findAll);
-
 /**
  * @swagger
  * /users/{id}:
@@ -98,8 +96,6 @@ router.get("/findAll", checkToken, userController.findAll);
  *           example: "https://example.com/avatar.jpg"
  */
 
-router.get("/:id", checkToken, userController.findById);
-
 /**
  * @swagger
  * /users/{id}:
@@ -142,8 +138,6 @@ router.get("/:id", checkToken, userController.findById);
  *                   example: Usuário não encontrado
  */
 
-router.patch("/:id", checkToken, userController.update);
-
 /**
  * @swagger
  * /users/{id}:
@@ -179,8 +173,6 @@ router.patch("/:id", checkToken, userController.update);
  *                   type: string
  *                   example: Usuário não encontrado
  */
-
-router.delete("/:id", checkToken, authorize(["admin"]), userController.remove);
 
 /**
  * @swagger
@@ -255,8 +247,6 @@ router.delete("/:id", checkToken, authorize(["admin"]), userController.remove);
  *                   example: "Acesso não autorizado."
  */
 
-router.patch("/associateProfile/:id", checkToken, authorize(["admin"]), userController.updateUserProfile);
-
 /**
  * @swagger
  * /users/me:
@@ -270,27 +260,35 @@ router.patch("/associateProfile/:id", checkToken, authorize(["admin"]), userCont
  *         description: Usuário autenticado
  */
 
-router.get("/me", checkToken, userController.me);
 
-/**
- * @swagger
- * /users/me/picture:
- *   patch:
- *     summary: Atualiza a foto de perfil do usuário autenticado
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               file:
- *                 type: string
- *                 format: binary
- */
+// /**
+//  * @swagger
+//  * /users/me/picture:
+//  *   patch:
+//  *     summary: Atualiza a foto de perfil do usuário autenticado
+//  *     tags: [Users]
+//  *     security:
+//  *       - bearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         multipart/form-data:
+//  *           schema:
+//  *             type: object
+//  *             properties:
+//  *               file:
+//  *                 type: string
+//  *                 format: binary
+//  */
+
+router.get("/me", checkToken, userController.me);
+router.get("/findAll", checkToken, userController.findAll);
+router.patch("/associateProfile/:id", checkToken, authorize(["admin"]), userController.updateUserProfile);
+
+router.get("/:id", checkToken, userController.findById);
+router.patch("/:id", checkToken, userController.update);
+router.delete("/:id", checkToken, authorize(["admin"]), userController.remove);
+
 router.patch(
   "/me/picture",
   checkToken,
