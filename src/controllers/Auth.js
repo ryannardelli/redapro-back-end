@@ -23,7 +23,7 @@ async function forgotPassword(req, res, next) {
   try {
     const { email } = req.body;
 
-    await authService.sendResetPasswordEmail(email);
+    await authService.sendResetPasswordEmailFlow(email);
 
     res.status(200).json({
       message: "Se o e-mail existir, enviaremos instruções para redefinição de senha."

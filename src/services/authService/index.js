@@ -15,6 +15,7 @@ const passwordResetRepository = require("../../repositories/passwordResetReposit
 
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
+const { sendResetPasswordEmail } = require("../emailService");
 
 async function createUser({ name, email, password }) {
   if (name.length < 2 || name.length > 100) throw new InvalidNameError();
@@ -96,7 +97,7 @@ async function login({ email, password }) {
   }
 }
 
-async function sendResetPasswordEmail(email) {;
+async function sendResetPasswordEmailFlow(email) {;
   if (!/\S+@\S+\.\S+/.test(email)) throw new InvalidEmailError();
 
   const user = await userRepository.findByEmail(email);
@@ -113,28 +114,7 @@ async function sendResetPasswordEmail(email) {;
 
   const link = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    },
-    tls: {
-      rejectUnauthorized: false
-    }
-  });
-
-  await transporter.sendMail({
-    to: email,
-    subject: "Redefinição de senha",
-    html: `
-      <p>Você solicitou a redefinição de senha.</p>
-      <p>Clique no link abaixo:</p>
-      <a href="${link}">${link}</a>
-    `
-  });
+   await sendResetPasswordEmail(user.email, link);
 }
 
 async function resetPassword(token, newPassword) {
@@ -162,5 +142,4 @@ async function resetPassword(token, newPassword) {
 }
 
 
-module.exports = { createUser, login, resetPassword, sendResetPasswordEmail };
-
+module.exports = { createUser, login, resetPassword, sendResetPasswordEmailFlow };

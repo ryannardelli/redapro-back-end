@@ -15,6 +15,7 @@ const AISubmissionLimitError = require('../../exceptions/domain/essay/AISubmissi
 const { generateWithOpenAI } = require('../openAIService');
 const EssayAiCorrectionNotAllowedError = require('../../exceptions/domain/essay/EssayAiCorrectionNotAllowedError');
 const EssayDeletionNotAllowedError = require('../../exceptions/domain/essay/EssayDeletionNotAllowedError');
+const { sendEssayCorrectedEmail } = require('../emailService');
 
 async function getAllEssay(filters = {}) {
     return essayRepository.findAll(filters);
@@ -184,6 +185,12 @@ async function finishReview(essayId, reviewerId, data) {
     essay.status = "CORRIGIDA"
 
     await essay.save();
+
+    const user = await userRepository.findById(essay.userId);
+
+    if (user?.email) {
+        await sendEssayCorrectedEmail(user.email, essay);
+    }
 
     return essay;
 }
