@@ -5,6 +5,9 @@ const profileRepository = require("../../repositories/profileRepository");
 
 const userRepository = require('../../repositories/userRepository');
 
+const cloudinary = require("../../config/cloudinary");
+const { FileNotProvided } = require("../../exceptions/common/FileNotProvided");
+
 async function getAllUsers() {
     return userRepository.findAll();
 }
@@ -65,4 +68,36 @@ async function updateUserProfile(userId, profileId) {
 
 }
 
-module.exports = { getAllUsers, getUserById, updateUser, deleteUser, updateUserProfile };
+async function uploadUserProfileImage(userId, file) {
+  if (!file) {
+    throw new FileNotProvided();
+  }
+
+  const user = await userRepository.findById(userId);
+
+  if (!user) throw new UserNotFoundError();
+
+  if (user.picturePublicId) {
+    await cloudinary.uploader.destroy(user.picturePublicId);
+  }
+
+  const result = await cloudinary.uploader.upload(
+    `data:${file.mimetype};base64,${file.buffer.toString("base64")}`,
+    {
+      folder: "users/profile",
+      resource_type: "image",
+    }
+  );
+
+  user.pictureUrl = result.secure_url;
+  user.picturePublicId = result.public_id;
+
+  await userRepository.save(user);
+
+  return {
+    url: result.secure_url,
+    publicId: result.public_id,
+  };
+}
+
+module.exports = { getAllUsers, getUserById, updateUser, deleteUser, updateUserProfile, uploadUserProfileImage };

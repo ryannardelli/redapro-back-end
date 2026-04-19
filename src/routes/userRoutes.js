@@ -4,6 +4,7 @@ const router = express.Router();
 const userController = require("../controllers/User");
 const { checkToken } = require("../middleware/checkToken");
 const authorize = require("../middleware/authorize");
+const { uploadImage } = require("../middleware/uploadImage");
 
 /**
  * @swagger
@@ -22,6 +23,8 @@ const authorize = require("../middleware/authorize");
  *       200:
  *         description: Lista de usuários retornada com sucesso
  */
+
+router.get("/findAll", checkToken, userController.findAll);
 
 /**
  * @swagger
@@ -95,6 +98,8 @@ const authorize = require("../middleware/authorize");
  *           example: "https://example.com/avatar.jpg"
  */
 
+router.get("/:id", checkToken, userController.findById);
+
 /**
  * @swagger
  * /users/{id}:
@@ -137,6 +142,8 @@ const authorize = require("../middleware/authorize");
  *                   example: Usuário não encontrado
  */
 
+router.patch("/:id", checkToken, userController.update);
+
 /**
  * @swagger
  * /users/{id}:
@@ -172,6 +179,8 @@ const authorize = require("../middleware/authorize");
  *                   type: string
  *                   example: Usuário não encontrado
  */
+
+router.delete("/:id", checkToken, authorize(["admin"]), userController.remove);
 
 /**
  * @swagger
@@ -246,6 +255,8 @@ const authorize = require("../middleware/authorize");
  *                   example: "Acesso não autorizado."
  */
 
+router.patch("/associateProfile/:id", checkToken, authorize(["admin"]), userController.updateUserProfile);
+
 /**
  * @swagger
  * /users/me:
@@ -258,12 +269,33 @@ const authorize = require("../middleware/authorize");
  *       200:
  *         description: Usuário autenticado
  */
-router.get("/me", checkToken, userController.me);
-router.get("/findAll", checkToken, userController.findAll);
-router.patch("/associateProfile/:id", checkToken, authorize(["admin"]), userController.updateUserProfile);
 
-router.get("/:id", checkToken, userController.findById);
-router.patch("/:id", checkToken, userController.update);
-router.delete("/:id", checkToken, authorize(["admin"]), userController.remove);
+router.get("/me", checkToken, userController.me);
+
+/**
+ * @swagger
+ * /users/me/picture:
+ *   patch:
+ *     summary: Atualiza a foto de perfil do usuário autenticado
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ */
+router.patch(
+  "/me/picture",
+  checkToken,
+  uploadImage.single("file"),
+  userController.uploadProfileImage
+);
 
 module.exports = router;

@@ -86,4 +86,20 @@ async function updateRole(req, res, next) {
   }
 }
 
-module.exports = { findAll, findById, update, remove, updateRole, updateUserProfile, me};
+async function uploadProfileImage(req, res, next) {
+  try {
+    const userId = req.user.id;
+
+    const result = await userService.uploadUserProfileImage(userId, req.file);
+
+    return res.status(200).json({
+      message: "Imagem atualizada com sucesso!",
+      url: result.url,
+    });
+
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { findAll, findById, update, remove, updateRole, updateUserProfile, uploadProfileImage, me};
