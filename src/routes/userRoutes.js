@@ -260,26 +260,70 @@ const { uploadImage } = require("../middleware/uploadImage");
  *         description: Usuário autenticado
  */
 
-
-// /**
-//  * @swagger
-//  * /users/me/picture:
-//  *   patch:
-//  *     summary: Atualiza a foto de perfil do usuário autenticado
-//  *     tags: [Users]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         multipart/form-data:
-//  *           schema:
-//  *             type: object
-//  *             properties:
-//  *               file:
-//  *                 type: string
-//  *                 format: binary
-//  */
+/**
+ * @swagger
+ * /users/me/picture:
+ *   patch:
+ *     summary: Atualiza a imagem de perfil do usuário autenticado
+ *     description: |
+ *       Permite que o usuário autenticado envie uma nova imagem de perfil.
+ *       A imagem é enviada via multipart/form-data e armazenada no Cloudinary.
+ *       Caso o usuário já possua uma imagem anterior, ela será removida automaticamente do Cloudinary.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - file
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: Arquivo de imagem (jpg, png, jpeg, etc.)
+ *     responses:
+ *       200:
+ *         description: Imagem de perfil atualizada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Imagem atualizada com sucesso!
+ *                 url:
+ *                   type: string
+ *                   example: https://res.cloudinary.com/.../profile.jpg
+ *       400:
+ *         description: Nenhum arquivo foi enviado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Arquivo não enviado
+ *       401:
+ *         description: Não autenticado (token inválido ou ausente)
+ *       404:
+ *         description: Usuário não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Usuário não encontrado
+ *       500:
+ *         description: Erro interno do servidor
+ */
 
 router.get("/me", checkToken, userController.me);
 router.get("/findAll", checkToken, userController.findAll);
