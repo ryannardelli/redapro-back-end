@@ -35,4 +35,4 @@ async function sendResetPasswordEmail(to, link) {
   });
 }
 
-module.exports = { sendEssayCorrectedEmail, sendResetPasswordEmail, sendEssayInReviewEmail };
+module.exports = { sendEssayCorrectedEmail, sendResetPasswordEmail };
