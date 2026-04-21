@@ -98,6 +98,16 @@ const Essay = sequelize.define("Essay", {
     defaultValue: "PENDENTE"
   },
 
+  attachmentUrl: {
+      type: DataTypes.STRING,
+      allowNull: true
+  },
+
+  attachmentPublicId: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+
   userId: {
     type: DataTypes.INTEGER,
     allowNull: false,

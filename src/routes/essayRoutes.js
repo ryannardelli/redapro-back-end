@@ -4,6 +4,7 @@ const router = express.Router();
 const essayController = require("../controllers/Essay");
 const { checkToken } = require("../middleware/checkToken");
 const authorize = require("../middleware/authorize");
+const { uploadArchive } = require("../middleware/uploadArchive");
 
 /**
  * @swagger
@@ -397,5 +398,67 @@ router.patch(
     essayController.correctWithAI
 );
 
+/**
+ * @swagger
+ * /essay/{id}/attachment:
+ *   post:
+ *     summary: Anexa um arquivo (PDF ou Word) a uma redação
+ *     description: >
+ *       Permite anexar um arquivo à redação.
+ *       O arquivo pode ser PDF ou DOCX e será armazenado na nuvem.
+ *       Caso já exista um arquivo, ele será substituído.
+ *     tags: [Essay]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID da redação
+ *         schema:
+ *           type: integer
+ *           example: 12
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - file
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: Arquivo PDF ou DOCX
+ *     responses:
+ *       200:
+ *         description: Arquivo anexado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Arquivo anexado com sucesso!
+ *                 url:
+ *                   type: string
+ *                   example: https://res.cloudinary.com/.../arquivo.pdf
+ *       400:
+ *         description: Arquivo inválido ou não enviado
+ *       403:
+ *         description: Usuário não autorizado
+ *       404:
+ *         description: Redação não encontrada
+ *       401:
+ *         description: Token inválido ou ausente
+ */
+router.post(
+  "/:id/attachment",
+  checkToken,
+  uploadArchive.single("file"),
+  essayController.uploadEssayAttachment
+);
 
 module.exports = router;

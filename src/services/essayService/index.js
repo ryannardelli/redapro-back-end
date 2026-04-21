@@ -7,15 +7,20 @@ const EssayNotFoundError = require('../../exceptions/domain/essay/EssayNotFoundE
 const EssayUpdateNotAllowedError = require('../../exceptions/domain/essay/EssayUpdateAllowedError');
 const EssayValidationContentError = require('../../exceptions/domain/essay/EssayValidationContentError');
 const EssayValidationTitleError = require('../../exceptions/domain/essay/EssayValidationTitleError');
+const EssayAiCorrectionNotAllowedError = require('../../exceptions/domain/essay/EssayAiCorrectionNotAllowedError');
+const EssayDeletionNotAllowedError = require('../../exceptions/domain/essay/EssayDeletionNotAllowedError');
+const InvalidCompetenceError = require('../../exceptions/domain/essay/InvalidCompetenceError');
+const AISubmissionLimitError = require('../../exceptions/domain/essay/AISubmissionLimitError');
+const FileNotProvided = require('../../exceptions/common/FileNotProvided');
+
 const essayRepository = require('../../repositories/essayRepository');
 const categoryRepository = require('../../repositories/categoryRepository');
 const userRepository = require('../../repositories/userRepository');
-const InvalidCompetenceError = require('../../exceptions/domain/essay/InvalidCompetenceError');
-const AISubmissionLimitError = require('../../exceptions/domain/essay/AISubmissionLimitError');
+
 const { generateWithOpenAI } = require('../openAIService');
-const EssayAiCorrectionNotAllowedError = require('../../exceptions/domain/essay/EssayAiCorrectionNotAllowedError');
-const EssayDeletionNotAllowedError = require('../../exceptions/domain/essay/EssayDeletionNotAllowedError');
 const { sendEssayCorrectedEmail } = require('../emailService');
+
+const cloudinary = require("../../config/cloudinary");
 
 async function getAllEssay(filters = {}) {
     return essayRepository.findAll(filters);
@@ -498,4 +503,40 @@ ${essay.content}
   }
 }
 
-module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser, startReview, finishReview, correctEssayWithAI };
+async function uploadEssayAttachment(essayId, file) {
+  if (!file) {
+    throw new FileNotProvided();
+  }
+
+  const essay = await essayRepository.findById(essayId);
+
+  if (!essay) {
+    throw new EssayNotFoundError();
+  }
+
+  if (essay.attachmentPublicId) {
+    await cloudinary.uploader.destroy(essay.attachmentPublicId, {
+      resource_type: "raw"
+    });
+  }
+
+  const result = await cloudinary.uploader.upload(
+    `data:${file.mimetype};base64,${file.buffer.toString("base64")}`,
+    {
+      folder: "essays/attachments",
+      resource_type: "raw"
+    }
+  );
+
+  essay.attachmentUrl = result.secure_url;
+  essay.attachmentPublicId = result.public_id;
+
+  await essayRepository.save(essay);
+
+  return {
+    url: result.secure_url,
+    publicId: result.public_id
+  };
+}
+
+module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser, startReview, finishReview, correctEssayWithAI, uploadEssayAttachment };

@@ -165,4 +165,23 @@ async function correctWithAI(req, res, next) {
     }
 }
 
-module.exports = { findAll, findById, update, remove, create, findEssayByUser, startReview, finishReview, correctWithAI };
+async function uploadEssayAttachment(req, res, next) {
+  try {
+    const essayId = req.params.id;
+
+    const result = await essayService.uploadEssayAttachment(
+      essayId,
+      req.file
+    );
+
+    return res.status(200).json({
+      message: "Arquivo anexado com sucesso!",
+      url: result.url,
+    });
+
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { findAll, findById, update, remove, create, findEssayByUser, startReview, finishReview, correctWithAI, uploadEssayAttachment };
