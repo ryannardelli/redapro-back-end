@@ -21,6 +21,9 @@ const { generateWithOpenAI } = require('../openAIService');
 const { sendEssayCorrectedEmail } = require('../emailService');
 
 const cloudinary = require("../../config/cloudinary");
+const path = require("path");
+
+const streamifier = require("streamifier");
 
 async function getAllEssay(filters = {}) {
     return essayRepository.findAll(filters);
@@ -516,27 +519,99 @@ async function uploadEssayAttachment(essayId, file) {
 
   if (essay.attachmentPublicId) {
     await cloudinary.uploader.destroy(essay.attachmentPublicId, {
-      resource_type: "raw"
+      resource_type: "raw",
     });
   }
 
-  const result = await cloudinary.uploader.upload(
-    `data:${file.mimetype};base64,${file.buffer.toString("base64")}`,
-    {
-      folder: "essays/attachments",
-      resource_type: "raw"
-    }
-  );
+  const originalName = file.originalname;
+
+  const ext = path.extname(originalName);
+  const baseName = originalName.replace(/\.[^/.]+$/, "");
+
+  const safeBaseName = baseName
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]/g, "");
+
+  const uniqueName = `${Date.now()}-${safeBaseName}`;
+
+  const result = await new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: "raw",
+        folder: "essays/attachments",
+        public_id: uniqueName,
+        format: ext.replace(".", ""),
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+
+    streamifier.createReadStream(file.buffer).pipe(stream);
+  });
 
   essay.attachmentUrl = result.secure_url;
   essay.attachmentPublicId = result.public_id;
+  essay.attachmentOriginalName = originalName;
 
   await essayRepository.save(essay);
 
   return {
     url: result.secure_url,
-    publicId: result.public_id
+    publicId: result.public_id,
+    originalName: originalName,
   };
 }
+
+// async function uploadEssayAttachment(essayId, file) {
+//   if (!file) {
+//     throw new FileNotProvided();
+//   }
+
+//   const essay = await essayRepository.findById(essayId);
+
+//   if (!essay) {
+//     throw new EssayNotFoundError();
+//   }
+
+//   if (essay.attachmentPublicId) {
+//     await cloudinary.uploader.destroy(essay.attachmentPublicId, {
+//       resource_type: "raw"
+//     });
+//   }
+
+//   const ext = path.extname(file.originalname);
+//   const baseName = file.originalname.replace(/\.[^/.]+$/, "");
+
+//   const publicId = `essays/attachments/${Date.now()}-${baseName}`;
+
+//   const result = await new Promise((resolve, reject) => {
+//   const stream = cloudinary.uploader.upload_stream(
+//     {
+//       resource_type: "raw",
+//       folder: "essays/attachments",
+//       public_id: `${Date.now()}-${baseName}${ext}`,
+//     },
+//     (error, result) => {
+//       if (error) return reject(error);
+//       resolve(result);
+//     }
+//   );
+
+//   streamifier.createReadStream(file.buffer).pipe(stream);
+// });
+
+//   essay.attachmentUrl = result.secure_url;
+//   essay.attachmentPublicId = result.public_id;
+
+//   await essayRepository.save(essay);
+
+//   return {
+//     url: result.secure_url,
+//     publicId: result.public_id
+//   };
+// }
 
 module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser, startReview, finishReview, correctEssayWithAI, uploadEssayAttachment };

@@ -10,6 +10,7 @@ function toEssayDto(essay) {
         createdAt: essay.createdAt ?? null,
         updatedAt: essay.updatedAt ?? null,
         attachmentUrl: essay.attachmentUrl ?? null,
+        attachmentOriginalName: essay.attachmentOriginalName ?? null,
 
         category: essay.category ? {
             id: essay.category.id,

@@ -108,6 +108,11 @@ const Essay = sequelize.define("Essay", {
     allowNull: true
   },
 
+  attachmentOriginalName: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+
   userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
