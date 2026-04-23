@@ -24,6 +24,8 @@ const cloudinary = require("../../config/cloudinary");
 const path = require("path");
 
 const streamifier = require("streamifier");
+const puppeteer = require("puppeteer");
+const { downloadEssayPdf } = require('../../controllers/Essay');
 
 async function getAllEssay(filters = {}) {
     return essayRepository.findAll(filters);
@@ -565,4 +567,80 @@ async function uploadEssayAttachment(essayId, file) {
   };
 }
 
-module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser, startReview, finishReview, correctEssayWithAI, uploadEssayAttachment };
+async function generateEssayPdf(essayId, userId) {
+  const essay = await essayRepository.findById(essayId);
+
+  if (!essay) throw new EssayNotFoundError();
+
+  const isOwner = essay.userId === userId;
+  const isReviewer = essay.reviewerId === userId;
+
+  if (!isOwner && !isReviewer) {
+    throw new EssayForbiddenError();
+  }
+
+  const html = `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: "Times New Roman", serif;
+              padding: 60px;
+              line-height: 1.8;
+            }
+
+            .header {
+              text-align: center;
+              margin-bottom: 40px;
+            }
+
+            .title {
+              font-size: 22px;
+              font-weight: bold;
+              margin-bottom: 10px;
+            }
+
+            .author {
+              font-size: 14px;
+              color: #555;
+            }
+
+            .content {
+              text-align: justify;
+              font-size: 14px;
+              white-space: pre-line;
+            }
+          </style>
+        </head>
+
+        <body>
+          <div class="header">
+            <div class="title">${essay.title}</div>
+            <div class="author">Autor: ${essay.user?.name || "Não informado"}</div>
+          </div>
+
+          <div class="content">
+            ${essay.content.replace(/\n/g, "<br />")}
+          </div>
+        </body>
+      </html>
+      `;
+
+  const browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+  const page = await browser.newPage();
+
+  await page.setContent(html, { waitUntil: "networkidle0" });
+
+  const pdfBuffer = await page.pdf({
+    format: "A4",
+    printBackground: true
+  });
+
+  await browser.close();
+
+  return pdfBuffer;
+}
+
+module.exports = { getAllEssay, getEssayById, updateEssay, createEssay, deleteEssay, getEssayByUser, startReview, finishReview, correctEssayWithAI, uploadEssayAttachment, generateEssayPdf };

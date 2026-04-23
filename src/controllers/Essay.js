@@ -84,7 +84,7 @@ async function startReview(req, res, next) {
 
         const io = req.app.get("io");
 
-        console.log("🚀 Emitindo evento para sala:", `user_${essay.userId}`);
+        console.log("Emitindo evento para sala:", `user_${essay.userId}`);
 
         io.to(`user_${essay.userId}`).emit("essay:status", {
             id: essay.id,
@@ -184,4 +184,24 @@ async function uploadEssayAttachment(req, res, next) {
   }
 }
 
-module.exports = { findAll, findById, update, remove, create, findEssayByUser, startReview, finishReview, correctWithAI, uploadEssayAttachment };
+async function downloadEssayPdf(req, res, next) {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+
+        const pdf = await essayService.generateEssayPdf(id, userId);
+
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader(
+            "Content-Disposition",
+            "attachment; filename=redacao.pdf"
+        );
+
+        return res.status(200).send(pdf);
+
+    } catch (err) {
+        next(err);
+    }
+}
+
+module.exports = { findAll, findById, update, remove, create, findEssayByUser, startReview, finishReview, correctWithAI, uploadEssayAttachment, downloadEssayPdf };

@@ -30,12 +30,12 @@ const { isUnexpected } = require("@azure-rest/ai-inference");
     console.error("Mensagem:", error.message);
 
     if (error.statusCode === 429) {
-      console.log("\n💡 Limite gratuito do GitHub Models atingido.");
+      console.log("\n Limite gratuito do GitHub Models atingido.");
       console.log("Espere ou habilite billing.");
     }
 
     if (error.statusCode === 401) {
-      console.log("\n💡 Token inválido ou sem permissão models:read.");
+      console.log("\n Token inválido ou sem permissão models:read.");
     }
   }
 })();

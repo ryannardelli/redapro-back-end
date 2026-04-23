@@ -454,11 +454,53 @@ router.patch(
  *       401:
  *         description: Token inválido ou ausente
  */
+
 router.post(
   "/:id/attachment",
   checkToken,
   uploadArchive.single("file"),
   essayController.uploadEssayAttachment
+);
+
+/**
+ * @swagger
+ * /essay/{id}/generate-pdf:
+ *   get:
+ *     summary: Baixa a redação em formato PDF
+ *     description: >
+ *       Gera e retorna um arquivo PDF contendo apenas a redação,
+ *       incluindo título, autor e conteúdo formatado.
+ *       O download é iniciado automaticamente.
+ *     tags: [Essay]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID da redação
+ *         schema:
+ *           type: integer
+ *           example: 12
+ *     responses:
+ *       200:
+ *         description: PDF gerado com sucesso
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       403:
+ *         description: Acesso negado (não é o dono da redação)
+ *       404:
+ *         description: Redação não encontrada
+ *       401:
+ *         description: Token inválido ou ausente
+ */
+router.get(
+  "/:id/generate-pdf",
+  checkToken,
+  essayController.downloadEssayPdf
 );
 
 module.exports = router;
