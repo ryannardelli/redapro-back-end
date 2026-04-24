@@ -26,6 +26,7 @@ const path = require("path");
 const streamifier = require("streamifier");
 const puppeteer = require("puppeteer");
 const { downloadEssayPdf } = require('../../controllers/Essay');
+const { normalizedContent } = require("../../utils/normalizedContent");
 
 async function getAllEssay(filters = {}) {
     return essayRepository.findAll(filters);
@@ -46,18 +47,17 @@ async function getEssayByUser(userId) {
 }
 
 async function createEssay(data, userId) {
-    // Validar categoria
     const category = await categoryRepository.findById(data.category_id);
     const user = await userRepository.findById(userId);
+
     if (!category) {
         throw new EssayCategoryNotFoundError();
     }
 
-    if(!user) {
+    if (!user) {
         throw new UserNotFoundError();
     }
 
-    // Evitar duplicidade (title + user + category)
     const existing = await essayRepository.findByTitle(
         data.title,
         userId,
@@ -68,20 +68,32 @@ async function createEssay(data, userId) {
         throw new EssayAlreadyExistsError(data.title);
     }
 
-    if (!data.title || data.title.trim().length < 5 || data.title.trim().length > 100) {
+    const normalizedTitle = data.title ? data.title.trim() : "";
+    const contentNormalized = normalizedContent(data.content);
+
+    if (
+        !normalizedTitle ||
+        normalizedTitle.length < 5 ||
+        normalizedTitle.length > 100
+    ) {
         throw new EssayValidationTitleError();
     }
 
-    if (!data.content || data.content.trim().length < 1000 || data.content.trim().length > 5000) {
+    if (
+        !contentNormalized ||
+        contentNormalized.length < 1000 ||
+        contentNormalized.length > 5000
+    ) {
         throw new EssayValidationContentError();
     }
+
     if (data.note !== undefined && data.note !== null) {
         throw new EssayNoteNotAllowedError();
     }
 
     return essayRepository.create({
-        title: data.title.trim(),
-        content: data.content.trim(),
+        title: normalizedTitle,
+        content: contentNormalized,
         categoryId: data.category_id,
         userId: userId,
         status: "PENDENTE",
@@ -91,18 +103,15 @@ async function createEssay(data, userId) {
 
 async function updateEssay(essayId, updateDto, userId) {
 
-    // Buscar redação
     const essay = await essayRepository.findById(essayId);
     if (!essay) {
         throw new EssayNotFoundError();
     }
 
-    // Garantir que o usuário é o dono
     if (essay.userId !== userId) {
         throw new EssayForbiddenError();
     }
 
-    // Bloquear edição se não estiver pendente
     if (essay.status !== "PENDENTE") {
         throw new EssayUpdateNotAllowedError();
     }
