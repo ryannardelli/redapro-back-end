@@ -579,56 +579,188 @@ async function generateEssayPdf(essayId, userId) {
     throw new EssayForbiddenError();
   }
 
+  const formattedText = essay.content.trim();
+
   const html = `
-      <html>
-        <head>
-          <style>
-            body {
-              font-family: "Times New Roman", serif;
-              padding: 60px;
-              line-height: 1.8;
-            }
+  <html>
+    <head>
+      <style>
+        @page {
+          size: A4;
+          margin: 40px;
+        }
 
-            .header {
-              text-align: center;
-              margin-bottom: 40px;
-            }
+        body {
+          font-family: "Times New Roman", serif;
+          font-size: 12px;
+          color: #000;
+          margin: 0;
+          padding: 0;
+        }
 
-            .title {
-              font-size: 22px;
-              font-weight: bold;
-              margin-bottom: 10px;
-            }
+        .container {
+          width: 100%;
+        }
 
-            .author {
-              font-size: 14px;
-              color: #555;
-            }
+        .header {
+          text-align: center;
+          border-bottom: 2px solid #000;
+          padding-bottom: 10px;
+          margin-bottom: 10px;
+        }
 
-            .content {
-              text-align: justify;
-              font-size: 14px;
-              white-space: pre-line;
-            }
-          </style>
-        </head>
+        .logo {
+          font-size: 18px;
+          font-weight: bold;
+        }
 
-        <body>
-          <div class="header">
-            <div class="title">${essay.title}</div>
-            <div class="author">Autor: ${essay.user?.name || "Não informado"}</div>
+        .subtitle {
+          font-size: 12px;
+        }
+
+        .competencies-container {
+          display: flex;
+          justify-content: space-between;
+          margin: 15px 0;
+          border: 1px solid #000;
+          padding: 10px;
+          background-color: #fcfcfc;
+        }
+
+        .comp-box {
+          text-align: center;
+          flex: 1;
+        }
+
+        .comp-title {
+          font-size: 10px;
+          font-weight: bold;
+          display: block;
+          margin-bottom: 4px;
+          text-transform: uppercase;
+        }
+
+        .comp-score {
+          width: 45px;
+          height: 30px;
+          border: 1px solid #000;
+          margin: 0 auto;
+          background: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 14px;
+        }
+
+        .total-box {
+          border-left: 2px solid #000;
+          padding-left: 10px;
+          margin-left: 10px;
+        }
+
+        .info {
+          margin: 10px 0;
+          font-size: 11px;
+        }
+
+        .info span {
+          display: inline-block;
+          margin-right: 20px;
+        }
+
+        .theme {
+          text-align: center;
+          font-weight: bold;
+          margin: 10px 0 15px 0;
+          font-size: 13px;
+        }
+
+        .sheet {
+          position: relative;
+          padding-left: 40px;
+          background-image: linear-gradient(#999 1px, transparent 1px);
+          background-size: 100% 28px; 
+          background-position: 0 -1px;
+        }
+
+        .line-numbers-container {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 30px;
+          border-right: 1px solid #000;
+        }
+
+        .line-number {
+          height: 28px;
+          line-height: 28px;
+          font-size: 10px;
+          color: #555;
+          text-align: center;
+        }
+
+        .essay-text {
+          margin: 0;
+          padding: 0;
+          line-height: 28px;
+          font-size: 14px; 
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          min-height: 840px;
+        }
+      </style>
+    </head>
+
+    <body>
+      <div class="container">
+        
+        <div class="header">
+          <div class="logo">RedaPro</div>
+          <div class="subtitle">Plataforma de Correção de Redações</div>
+        </div>
+
+        <div class="info">
+          <span><strong>Nome:</strong> ${essay.user?.name || "Não informado"}</span>
+          <span><strong>Data:</strong> ${new Date().toLocaleDateString()}</span>
+        </div>
+
+        <div class="competencies-container">
+          ${[1, 2, 3, 4, 5].map(num => `
+            <div class="comp-box">
+              <span class="comp-title">Comp. ${num}</span>
+              <div class="comp-score"></div>
+            </div>
+          `).join("")}
+          
+          <div class="comp-box total-box">
+            <span class="comp-title">Nota Total</span>
+            <div class="comp-score" style="background-color: #eee;"></div>
+          </div>
+        </div>
+
+        <div class="theme">
+          Tema: ${essay.title}
+        </div>
+
+        <div class="sheet">
+          <div class="line-numbers-container">
+            ${Array.from({ length: 30 }).map((_, i) => `
+              <div class="line-number">${i + 1}</div>
+            `).join("")}
           </div>
 
-          <div class="content">
-            ${essay.content.replace(/\n/g, "<br />")}
-          </div>
-        </body>
-      </html>
-      `;
+          <div class="essay-text">${formattedText}</div>
+        </div>
+
+      </div>
+    </body>
+  </html>
+  `;
 
   const browser = await puppeteer.launch({
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
   const page = await browser.newPage();
 
   await page.setContent(html, { waitUntil: "networkidle0" });
