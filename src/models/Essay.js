@@ -99,18 +99,21 @@ const Essay = sequelize.define("Essay", {
   },
 
   attachmentUrl: {
-      type: DataTypes.STRING,
-      allowNull: true
+    type: DataTypes.STRING,
+    allowNull: true,
+    field: "attachment_url"
   },
 
   attachmentPublicId: {
     type: DataTypes.STRING,
-    allowNull: true
+    allowNull: true,
+    field: "attachment_public_id"
   },
 
   attachmentOriginalName: {
     type: DataTypes.STRING,
-    allowNull: true
+    allowNull: true,
+    field: "attachment_original_name"
   },
 
   userId: {
