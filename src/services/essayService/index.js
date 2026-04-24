@@ -763,7 +763,12 @@ async function generateEssayPdf(essayId, userId) {
   });
   const page = await browser.newPage();
 
-  await page.setContent(html, { waitUntil: "networkidle0" });
+  page.setDefaultTimeout(0);
+  page.setDefaultNavigationTimeout(0);
+
+  await page.setContent(html, {
+    waitUntil: "domcontentloaded",
+  });
 
   const pdfBuffer = await page.pdf({
     format: "A4",
